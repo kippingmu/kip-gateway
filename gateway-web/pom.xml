@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>xyz.kip</groupId>
+        <artifactId>kip-gateway</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+
+    <!--
+        项目打包方式为 JAR 包，适用于可执行的应用程序或库。
+     -->
+    <packaging>jar</packaging>
+    <!--
+        当前模块的唯一标识符，用于区分同一项目下的不同子模块。
+     -->
+    <artifactId>gateway-web</artifactId>
+
+    <!-- 一般通用基础配置 -->
+
+    <!--
+        项目依赖列表，包含 Spring Boot、Spring Cloud、Alibaba Cloud 以及本地模块的相关依赖。
+     -->
+    <dependencies>
+        <!-- Spring Boot 核心依赖 -->
+        <!--
+            spring-boot-devtools：开发工具依赖，支持热部署等功能。
+            scope 设置为 runtime 表示仅在运行时生效，optional 设为 true 表示可选依赖。
+         -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <!--
+            spring-boot-starter-actuator：监控和管理应用的生产就绪功能。
+            排除默认的日志依赖以避免冲突。
+         -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Spring Cloud 相关依赖 -->
+        <!--
+            spring-cloud-starter-bootstrap：支持从配置服务器加载外部配置。
+         -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <!--
+            spring-cloud-starter-gateway：Spring Cloud Gateway 网关组件，用于路由和过滤请求。
+         -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+        <!--
+            spring-cloud-starter-openfeign：声明式 HTTP 客户端，简化微服务间的调用。
+         -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <!--
+            spring-cloud-starter-loadbalancer：客户端负载均衡器，用于服务发现和负载分配。
+         -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
+        <!-- Alibaba Cloud 相关依赖 -->
+        <!--
+            spring-cloud-starter-alibaba-nacos-discovery：Nacos 服务注册与发现组件。
+         -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <!--
+            spring-cloud-starter-alibaba-nacos-config：Nacos 配置中心组件，支持动态配置管理。
+         -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <!--
+            spring-cloud-starter-alibaba-sentinel：Sentinel 流量控制和熔断降级组件。
+         -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+        <!--
+            sentinel-datasource-nacos：Sentinel 数据源集成 Nacos，实现规则持久化。
+         -->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+        </dependency>
+        <!--
+            spring-cloud-alibaba-sentinel-gateway：Sentinel 与 Spring Cloud Gateway 集成组件。
+         -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
+        </dependency>
+
+        <!-- 本地模块依赖 -->
+        <dependency>
+            <groupId>xyz.kip</groupId>
+            <artifactId>gateway-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <!--
+        构建配置部分，定义了最终生成的 JAR 文件名称和使用的 Maven 插件。
+     -->
+    <build>
+        <!--
+            最终生成的 JAR 文件名为 app.jar。
+         -->
+        <finalName>app</finalName>
+        <!--
+            插件列表，用于扩展 Maven 的构建能力。
+         -->
+        <plugins>
+            <!--
+                spring-boot-maven-plugin：Spring Boot 官方插件，支持打包可执行 JAR 和运行应用。
+             -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- 指定应用程序入口类 -->
+                    <mainClass>xyz.kip.GatewayBootApplication</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>
