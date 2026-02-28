@@ -1,6 +1,7 @@
 package xyz.kip.gateway.filter;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -20,9 +21,10 @@ import java.util.List;
  * @author xiaoshichuan
  * @version 2026-02-28
  */
-@Slf4j
 @Component
 public class AuthorizationFilter implements GlobalFilter, Ordered {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthorizationFilter.class);
 
     /**
      * 权限检查规则（简化示例）
@@ -49,7 +51,7 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
 
         // 如果没有userId，说明认证未通过（已在前置过滤器处理）
         if (userId == null) {
-            log.debug("traceId={}, Skipping authorization check for path: {}",
+            logger.debug("traceId={}, Skipping authorization check for path: {}",
                     TraceIdUtil.getTraceId(), path);
             return chain.filter(exchange);
         }
@@ -57,18 +59,18 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
         try {
             // 检查权限
             if (!hasPermission(userId, path)) {
-                log.warn("traceId={}, User {} has no permission for path: {}",
+                logger.warn("traceId={}, User {} has no permission for path: {}",
                         TraceIdUtil.getTraceId(), userId, path);
                 return handleAuthorizationError(exchange, "You don't have permission to access this resource");
             }
 
-            log.debug("traceId={}, User {} authorized for path: {}",
+            logger.debug("traceId={}, User {} authorized for path: {}",
                     TraceIdUtil.getTraceId(), userId, path);
 
             return chain.filter(exchange);
 
         } catch (Exception e) {
-            log.error("traceId={}, Authorization filter error: {}",
+            logger.error("traceId={}, Authorization filter error: {}",
                     TraceIdUtil.getTraceId(), e.getMessage(), e);
             return handleAuthorizationError(exchange, "Authorization check failed");
         }

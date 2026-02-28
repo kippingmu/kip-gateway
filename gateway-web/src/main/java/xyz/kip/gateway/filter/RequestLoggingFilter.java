@@ -1,6 +1,7 @@
 package xyz.kip.gateway.filter;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -21,11 +22,11 @@ import java.util.Objects;
  * @author xiaoshichuan
  * @version 2026-02-28
  */
-@Slf4j
 @Component
 public class RequestLoggingFilter implements GlobalFilter, Ordered {
 
-    private static final org.slf4j.Logger accessLog = org.slf4j.LoggerFactory.getLogger("xyz.kip.gateway.filter.RequestLoggingFilter");
+    private static final Logger logger = LoggerFactory.getLogger(RequestLoggingFilter.class);
+    private static final Logger accessLog = LoggerFactory.getLogger("xyz.kip.gateway.filter.RequestLoggingFilter");
 
     /**
      * 执行过滤器
@@ -50,7 +51,7 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
         final String queryString = exchange.getRequest().getQueryParams().isEmpty() ? "" : "?" + exchange.getRequest().getQueryParams();
         final String finalTraceId = traceId;
 
-        log.info("==> REQUEST START: traceId={}, method={}, path={}, clientIp={}",
+        logger.info("==> REQUEST START: traceId={}, method={}, path={}, clientIp={}",
                 traceId, method, path, clientIp);
 
         // 访问日志
@@ -63,7 +64,7 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
             long duration = System.currentTimeMillis() - startTime;
             int status = exchange.getResponse().getStatusCode() != null ? exchange.getResponse().getStatusCode().value() : 500;
 
-            log.info("<== REQUEST END: traceId={}, status={}, duration={}ms",
+            logger.info("<== REQUEST END: traceId={}, status={}, duration={}ms",
                     finalTraceId, status, duration);
 
             // 访问日志

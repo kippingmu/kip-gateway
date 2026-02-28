@@ -3,7 +3,8 @@ package xyz.kip.gateway.config;
 import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayFlowRule;
 import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayRuleManager;
 import com.alibaba.csp.sentinel.adapter.gateway.sc.SentinelGatewayFilter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,9 +21,10 @@ import java.util.Set;
  * @author xiaoshichuan
  * @version 2026-02-28
  */
-@Slf4j
 @Configuration
 public class SentinelGatewayConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(SentinelGatewayConfig.class);
 
     /**
      * 初始化Sentinel网关过滤器
@@ -40,25 +42,25 @@ public class SentinelGatewayConfig {
     public void initGatewayFlowRules() {
         Set<GatewayFlowRule> rules = new HashSet<>();
 
-        // 规则 1: 基于路由的限流 - user-service
+        // 规则 1: 基于路由的限流 - user-service 每秒100个请求
         GatewayFlowRule rule1 = new GatewayFlowRule("user-service")
-                .setCount(100)  // 每秒100个请求
+                .setCount(100)
                 .setIntervalSec(1);
         rules.add(rule1);
 
-        // 规则 2: 基于路由的限流 - order-service
+        // 规则 2: 基于路由的限流 - order-service 每秒50个请求
         GatewayFlowRule rule2 = new GatewayFlowRule("order-service")
-                .setCount(50)  // 每秒50个请求
+                .setCount(50)
                 .setIntervalSec(1);
         rules.add(rule2);
 
-        // 规则 3: 基于路由的限流 - product-service
+        // 规则 3: 基于路由的限流 - product-service 每秒200个请求
         GatewayFlowRule rule3 = new GatewayFlowRule("product-service")
-                .setCount(200)  // 每秒200个请求
+                .setCount(200)
                 .setIntervalSec(1);
         rules.add(rule3);
 
         GatewayRuleManager.loadRules(rules);
-        log.info("Sentinel gateway flow rules initialized, count: {}", rules.size());
+        logger.info("Sentinel gateway flow rules initialized, count: {}", rules.size());
     }
 }

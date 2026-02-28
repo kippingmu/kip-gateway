@@ -1,6 +1,7 @@
 package xyz.kip.gateway.config;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -17,9 +18,10 @@ import java.util.Arrays;
  * @author xiaoshichuan
  * @version 2026-02-28
  */
-@Slf4j
 @Configuration
 public class GatewayCorsConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(GatewayCorsConfig.class);
 
     /**
      * 配置CORS跨域
@@ -60,8 +62,7 @@ public class GatewayCorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
-        log.info("CORS configuration initialized successfully");
+        logger.info("CORS configuration initialized successfully");
         return source;
     }
 }
-

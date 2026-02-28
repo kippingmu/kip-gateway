@@ -1,6 +1,7 @@
 package xyz.kip.gateway.config;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
 import org.springframework.stereotype.Component;
@@ -17,9 +18,10 @@ import java.util.List;
  * @author xiaoshichuan
  * @version 2026-02-28
  */
-@Slf4j
 @Component
 public class DynamicRouteLoader implements RouteDefinitionRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(DynamicRouteLoader.class);
 
     private final List<RouteDefinition> routes = new ArrayList<>();
 
@@ -32,7 +34,7 @@ public class DynamicRouteLoader implements RouteDefinitionRepository {
     public Mono<Void> save(Mono<RouteDefinition> route) {
         return route.doOnNext(r -> {
             routes.add(r);
-            log.info("Route added: id={}, uri={}", r.getId(), r.getUri());
+            logger.info("Route added: id={}, uri={}", r.getId(), r.getUri());
         }).then();
     }
 
@@ -40,7 +42,7 @@ public class DynamicRouteLoader implements RouteDefinitionRepository {
     public Mono<Void> delete(Mono<String> routeId) {
         return routeId.doOnNext(id -> {
             routes.removeIf(r -> r.getId().equals(id));
-            log.info("Route deleted: id={}", id);
+            logger.info("Route deleted: id={}", id);
         }).then();
     }
 
@@ -50,7 +52,7 @@ public class DynamicRouteLoader implements RouteDefinitionRepository {
     public void updateRoutes(List<RouteDefinition> newRoutes) {
         routes.clear();
         routes.addAll(newRoutes);
-        log.info("Routes updated, total count: {}", routes.size());
+        logger.info("Routes updated, total count: {}", routes.size());
     }
 
     /**
@@ -58,7 +60,7 @@ public class DynamicRouteLoader implements RouteDefinitionRepository {
      */
     public void addRoute(RouteDefinition route) {
         routes.add(route);
-        log.info("Route added: id={}, uri={}", route.getId(), route.getUri());
+        logger.info("Route added: id={}, uri={}", route.getId(), route.getUri());
     }
 
     /**
@@ -66,7 +68,6 @@ public class DynamicRouteLoader implements RouteDefinitionRepository {
      */
     public void removeRoute(String routeId) {
         routes.removeIf(r -> r.getId().equals(routeId));
-        log.info("Route removed: id={}", routeId);
+        logger.info("Route removed: id={}", routeId);
     }
 }
-

@@ -1,7 +1,7 @@
 package xyz.kip.gateway.handler;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBufferFactory;
@@ -23,11 +23,11 @@ import java.nio.charset.StandardCharsets;
  * @author xiaoshichuan
  * @version 2026-02-28
  */
-@Slf4j
 @Component
 @Order(-1)
-@RequiredArgsConstructor
 public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
             response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
         } else {
             response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
-            log.error("traceId={}, Unexpected error occurred: {}", traceId, ex.getMessage(), ex);
+            logger.error("traceId={}, Unexpected error occurred: {}", traceId, ex.getMessage(), ex);
         }
 
         // 构建错误响应JSON

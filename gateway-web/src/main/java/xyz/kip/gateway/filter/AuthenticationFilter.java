@@ -1,6 +1,7 @@
 package xyz.kip.gateway.filter;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -22,9 +23,10 @@ import java.util.List;
  * @author xiaoshichuan
  * @version 2026-02-28
  */
-@Slf4j
 @Component
 public class AuthenticationFilter implements GlobalFilter, Ordered {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
 
     /**
      * 不需要认证的路径（白名单）
@@ -56,14 +58,14 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
             if (authHeader == null || authHeader.isEmpty()) {
-                log.warn("traceId={}, No authentication token provided for path: {}",
+                logger.warn("traceId={}, No authentication token provided for path: {}",
                         TraceIdUtil.getTraceId(), path);
                 return handleAuthenticationError(exchange, "Missing authentication token");
             }
 
             // 验证Token格式
             if (!authHeader.startsWith("Bearer ")) {
-                log.warn("traceId={}, Invalid token format for path: {}",
+                logger.warn("traceId={}, Invalid token format for path: {}",
                         TraceIdUtil.getTraceId(), path);
                 return handleAuthenticationError(exchange, "Invalid token format");
             }
@@ -72,13 +74,13 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
             // 验证Token（这里简化处理，实际应该验证JWT签名）
             if (!validateToken(token)) {
-                log.warn("traceId={}, Invalid token for path: {}",
+                logger.warn("traceId={}, Invalid token for path: {}",
                         TraceIdUtil.getTraceId(), path);
                 return handleAuthenticationError(exchange, "Invalid or expired token");
             }
 
             // Token验证成功，继续处理请求
-            log.debug("traceId={}, Authentication successful for path: {}",
+            logger.debug("traceId={}, Authentication successful for path: {}",
                     TraceIdUtil.getTraceId(), path);
 
             // 将用户信息添加到请求属性中，供下游过滤器使用
@@ -88,7 +90,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
 
         } catch (Exception e) {
-            log.error("traceId={}, Authentication filter error: {}",
+            logger.error("traceId={}, Authentication filter error: {}",
                     TraceIdUtil.getTraceId(), e.getMessage(), e);
             return handleAuthenticationError(exchange, "Authentication failed");
         }

@@ -1,7 +1,7 @@
 package xyz.kip.gateway.controller;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +20,23 @@ import java.util.Map;
  * @author xiaoshichuan
  * @version 2026-02-28
  */
-@Slf4j
 @RestController
 @RequestMapping("/gateway")
-@RequiredArgsConstructor
 public class GatewayManagementController {
+
+    private static final Logger logger = LoggerFactory.getLogger(GatewayManagementController.class);
 
     private final RouteDefinitionLocator routeDefinitionLocator;
     private final DynamicRouteLoader dynamicRouteLoader;
+
+    /**
+     * 构造函数 - 依赖注入
+     */
+    public GatewayManagementController(RouteDefinitionLocator routeDefinitionLocator,
+                                       DynamicRouteLoader dynamicRouteLoader) {
+        this.routeDefinitionLocator = routeDefinitionLocator;
+        this.dynamicRouteLoader = dynamicRouteLoader;
+    }
 
     /**
      * 健康检查接口
@@ -49,7 +58,7 @@ public class GatewayManagementController {
         try {
             Flux<RouteDefinition> routes = routeDefinitionLocator.getRouteDefinitions();
             routes.subscribe(route ->
-                    log.debug("Route: id={}, uri={}, predicates={}",
+                    logger.debug("Route: id={}, uri={}, predicates={}",
                             route.getId(), route.getUri(), route.getPredicates())
             );
 
@@ -60,7 +69,7 @@ public class GatewayManagementController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("Failed to get routes: {}", e.getMessage(), e);
+            logger.error("Failed to get routes: {}", e.getMessage(), e);
             Map<String, Object> error = new HashMap<>();
             error.put("code", 500);
             error.put("message", "Failed to get routes");
@@ -95,7 +104,7 @@ public class GatewayManagementController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("Failed to get route {}: {}", routeId, e.getMessage(), e);
+            logger.error("Failed to get route {}: {}", routeId, e.getMessage(), e);
             Map<String, Object> error = new HashMap<>();
             error.put("code", 500);
             error.put("message", "Failed to get route");
@@ -118,10 +127,10 @@ public class GatewayManagementController {
             response.put("routeId", routeDefinition.getId());
             response.put("timestamp", System.currentTimeMillis());
 
-            log.info("Route added: id={}", routeDefinition.getId());
+            logger.info("Route added: id={}", routeDefinition.getId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("Failed to add route: {}", e.getMessage(), e);
+            logger.error("Failed to add route: {}", e.getMessage(), e);
             Map<String, Object> error = new HashMap<>();
             error.put("code", 500);
             error.put("message", "Failed to add route");
@@ -144,10 +153,10 @@ public class GatewayManagementController {
             response.put("routeId", routeId);
             response.put("timestamp", System.currentTimeMillis());
 
-            log.info("Route deleted: id={}", routeId);
+            logger.info("Route deleted: id={}", routeId);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("Failed to delete route {}: {}", routeId, e.getMessage(), e);
+            logger.error("Failed to delete route {}: {}", routeId, e.getMessage(), e);
             Map<String, Object> error = new HashMap<>();
             error.put("code", 500);
             error.put("message", "Failed to delete route");
@@ -176,7 +185,7 @@ public class GatewayManagementController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("Failed to get stats: {}", e.getMessage(), e);
+            logger.error("Failed to get stats: {}", e.getMessage(), e);
             Map<String, Object> error = new HashMap<>();
             error.put("code", 500);
             error.put("message", "Failed to get stats");
@@ -185,4 +194,3 @@ public class GatewayManagementController {
         }
     }
 }
-
