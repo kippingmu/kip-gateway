@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.13</version>
+        <version>3.5.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -25,9 +25,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <app.version>2023.10.08</app.version>
         <start-class>GatewayBootApplication</start-class>
-        <spring.cloud.version>2023.0.6</spring.cloud.version>
-        <cloud.alibaba.version>2023.0.1.0</cloud.alibaba.version>
-        <nacos.client.version>2.3.2</nacos.client.version>
+        <spring.cloud.version>2025.0.0</spring.cloud.version>
+        <cloud.alibaba.version>2025.0.0.0</cloud.alibaba.version>
+        <nacos.client.version>3.0.3</nacos.client.version>
     </properties>
 
     <dependencyManagement>

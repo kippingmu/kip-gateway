@@ -132,7 +132,7 @@ Maven编译结果：
 ### 依赖统计
 
 **主要依赖：**
-- Spring Boot: 3.3.13
+- Spring Boot: 3.2.4
 - Spring Cloud: 2023.0.6
 - Spring Cloud Alibaba: 2023.0.1.0
 - Nacos Client: 2.3.2

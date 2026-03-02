@@ -1,109 +1,69 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: kip-gateway
-  # Spring Cloud Gateway 配置
   cloud:
     gateway:
-      # 启用网关
-      enabled: true
       # 路由配置
-      routes:
-        # 示例路由：用户服务
-        - id: user-service
-          uri: lb://kip-user-service
-          predicates:
-            - Path=/api/user/**
-          filters:
-            - StripPrefix=2
-        # 示例路由：订单服务
-        - id: order-service
-          uri: lb://kip-order-service
-          predicates:
-            - Path=/api/order/**
-          filters:
-            - StripPrefix=2
-        # 示例路由：产品服务
-        - id: product-service
-          uri: lb://kip-product-service
-          predicates:
-            - Path=/api/product/**
-          filters:
-            - StripPrefix=2
-      # 网关全局过滤器配置
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins:
-              - "*"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - PATCH
-              - OPTIONS
-            allowedHeaders:
-              - "*"
-            allow-credentials: true
-            max-age: 3600
-      # WebSocket支持
-      default-filters:
-        # 日志过滤器（自定义实现）
-        - name: RequestLogging
-    # Nacos 服务发现与注册配置
+      server:
+        webflux:
+          routes:
+            - id: auth-service
+              uri: lb://kip-auth-service
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - name: StripPrefix
+                  args:
+                    parts: 2
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 10.42.0.125:8848
         enabled: true
         register-enabled: true
         service: kip-gateway
         group: DEFAULT_GROUP
         namespace: ""
-      # Nacos 配置中心
       config:
-        server-addr: 127.0.0.1:8848
+        server-addr: 10.42.0.125:8848
         enabled: true
         file-extension: yml
         group: DEFAULT_GROUP
         namespace: ""
-        # 支持多个配置文件
-        shared-configs:
-          - dataId: gateway-routes.yml
-            group: DEFAULT_GROUP
-            refresh: true
-    # Sentinel 限流降级配置
-    sentinel:
-      enabled: true
-      transport:
-        dashboard: 127.0.0.1:8080
-        port: 8719
-      datasource:
-        nacos-degrade-rules:
-          nacos:
-            server-addr: 127.0.0.1:8848
-            dataId: sentinel-degrade-rules
-            groupId: DEFAULT_GROUP
-            rule-type: degrade
-        nacos-flow-rules:
-          nacos:
-            server-addr: 127.0.0.1:8848
-            dataId: sentinel-flow-rules
-            groupId: DEFAULT_GROUP
-            rule-type: flow
+    sentinel: # Sentinel 总配置入口（Spring Cloud Alibaba）
+      enabled: true                         # 是否启用 Sentinel 自动装配与拦截；true=启用限流/熔断等能力
 
-  # Jackson 序列化配置
+      transport: # Sentinel 与 Dashboard 的通讯配置（监控上报/推送规则通道）
+        dashboard: 10.42.0.125:8080         # Sentinel Dashboard 地址；用于展示监控、管理规则（可推送但生产更常用数据源）
+        port: 8719                          # 本应用本机开放的 transport 通讯端口（Dashboard 连接/推送规则会用）
+        # 若 8719 被占用，Sentinel 可能会自动尝试 +1 递增端口（视版本实现）
+
+      datasource: # 规则数据源配置：把规则从外部系统加载进应用，并监听变更（推荐生产做法）
+        nacos-degrade-rules: # 数据源名称（自定义 key）；通常用于区分不同规则集
+          nacos: # 数据源类型：Nacos（配置中心作为规则存储与下发）
+            server-addr: 10.42.0.125:8848   # Nacos 服务地址（规则从这里拉取/订阅）
+            dataId: sentinel-degrade-rules  # Nacos 中该规则配置的 dataId（对应一份配置文件/配置项）
+            groupId: DEFAULT_GROUP          # Nacos 配置分组（不写一般也是 DEFAULT_GROUP）
+            rule-type: degrade              # 规则类型：degrade=熔断降级规则（RT/异常比例/异常数触发熔断）
+
+        nacos-flow-rules: # 另一个数据源名称（自定义 key）
+          nacos: # 同样是 Nacos 数据源
+            server-addr: 10.42.0.125:8848   # Nacos 服务地址（可与上面复用）
+            dataId: sentinel-flow-rules     # Nacos 中流控规则的 dataId
+            groupId: DEFAULT_GROUP          # Nacos 配置分组
+            rule-type: flow                 # 规则类型：flow=流控规则（QPS/并发线程数/调用关系等维度限流）
+
   jackson:
     default-property-inclusion: non_empty
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 
-# 服务端口
 server:
-  port: 8888
+  port: 9527
   servlet:
     context-path: /
 
-# 日志配置
 logging:
   level:
     root: INFO
@@ -117,7 +77,6 @@ logging:
     max-size: 100MB
     max-history: 30
 
-# Spring Boot Actuator 配置
 management:
   endpoints:
     web:
@@ -128,8 +87,7 @@ management:
       show-details: always
     gateway:
       enabled: true
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
-

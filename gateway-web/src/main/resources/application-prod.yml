@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: prod
   application:
     name: kip-gateway
 
@@ -22,4 +20,3 @@ logging:
     root: WARN
     org.springframework.cloud.gateway: INFO
     xyz.kip: INFO
-

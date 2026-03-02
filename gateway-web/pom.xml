@@ -39,17 +39,10 @@
         </dependency>
         <!--
             spring-boot-starter-actuator：监控和管理应用的生产就绪功能。
-            排除默认的日志依赖以避免冲突。
          -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Spring Cloud 相关依赖 -->

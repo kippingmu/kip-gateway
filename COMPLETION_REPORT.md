@@ -413,7 +413,7 @@ docker ps | grep kip-gateway
 
 **版本信息**
 - 应用版本: 1.0.0
-- Spring Boot: 3.3.13
+- Spring Boot: 3.2.4
 - Spring Cloud: 2023.0.6
 - JDK: 21
 

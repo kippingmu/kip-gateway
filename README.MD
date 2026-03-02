@@ -1,6 +1,6 @@
 # Spring Cloud Gateway 完整功能规划
 
-基于您的项目配置（Spring Boot 3.3.13 + Spring Cloud 2023.0.6 + Alibaba Cloud），以下是Spring Cloud Gateway需要实现的核心功能：
+基于您的项目配置（Spring Boot 3.2.4 + Spring Cloud 2023.0.6 + Alibaba Cloud），以下是Spring Cloud Gateway需要实现的核心功能：
 
 ## 一、核心路由功能（必须实现）
 
