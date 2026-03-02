@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import xyz.kip.gateway.exception.GatewayException;
 import xyz.kip.gateway.util.TraceIdUtil;
 
 import java.util.Arrays;
@@ -64,7 +63,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             }
 
             // 验证Token格式
-            if (!authHeader.startsWith("Bearer ")) {
+            if (!authHeader.startsWith("Bearer")) {
                 logger.warn("traceId={}, Invalid token format for path: {}",
                         TraceIdUtil.getTraceId(), path);
                 return handleAuthenticationError(exchange, "Invalid token format");

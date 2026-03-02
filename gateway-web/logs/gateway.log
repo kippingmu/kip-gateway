@@ -1,0 +1,318 @@
+2026-03-03 00:51:04.154 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2026-03-03 00:51:04.173 [restartedMain] INFO  o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-03 00:51:05.359 [restartedMain] INFO  xyz.kip.GatewayBootApplication - The following 1 profile is active: "dev"
+2026-03-03 00:51:05.603 [restartedMain] WARN  o.s.b.w.r.c.AnnotationConfigReactiveWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'sentinelGatewayFilter' defined in class path resource [com/alibaba/cloud/sentinel/gateway/scg/SentinelSCGAutoConfiguration.class]: Cannot register bean definition [Root bean: class=null; scope=; abstract=false; lazyInit=null; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=com.alibaba.cloud.sentinel.gateway.scg.SentinelSCGAutoConfiguration; factoryMethodName=sentinelGatewayFilter; initMethodNames=null; destroyMethodNames=[(inferred)]; defined in class path resource [com/alibaba/cloud/sentinel/gateway/scg/SentinelSCGAutoConfiguration.class]] for bean 'sentinelGatewayFilter' since there is already [Root bean: class=null; scope=; abstract=false; lazyInit=null; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=sentinelGatewayConfig; factoryMethodName=sentinelGatewayFilter; initMethodNames=null; destroyMethodNames=[(inferred)]; defined in class path resource [xyz/kip/gateway/config/SentinelGatewayConfig.class]] bound.
+2026-03-03 00:51:05.612 [restartedMain] INFO  o.s.b.a.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-03 00:51:05.618 [restartedMain] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'sentinelGatewayFilter', defined in class path resource [com/alibaba/cloud/sentinel/gateway/scg/SentinelSCGAutoConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [xyz/kip/gateway/config/SentinelGatewayConfig.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2026-03-03 00:51:34.959 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2026-03-03 00:51:34.980 [restartedMain] INFO  o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-03 00:51:35.152 [restartedMain] INFO  xyz.kip.GatewayBootApplication - The following 1 profile is active: "dev"
+2026-03-03 00:51:35.398 [restartedMain] WARN  o.s.b.w.r.c.AnnotationConfigReactiveWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'sentinelGatewayFilter' defined in class path resource [com/alibaba/cloud/sentinel/gateway/scg/SentinelSCGAutoConfiguration.class]: Cannot register bean definition [Root bean: class=null; scope=; abstract=false; lazyInit=null; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=com.alibaba.cloud.sentinel.gateway.scg.SentinelSCGAutoConfiguration; factoryMethodName=sentinelGatewayFilter; initMethodNames=null; destroyMethodNames=[(inferred)]; defined in class path resource [com/alibaba/cloud/sentinel/gateway/scg/SentinelSCGAutoConfiguration.class]] for bean 'sentinelGatewayFilter' since there is already [Root bean: class=null; scope=; abstract=false; lazyInit=null; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=sentinelGatewayConfig; factoryMethodName=sentinelGatewayFilter; initMethodNames=null; destroyMethodNames=[(inferred)]; defined in class path resource [xyz/kip/gateway/config/SentinelGatewayConfig.class]] bound.
+2026-03-03 00:51:35.406 [restartedMain] INFO  o.s.b.a.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-03 00:51:35.411 [restartedMain] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'sentinelGatewayFilter', defined in class path resource [com/alibaba/cloud/sentinel/gateway/scg/SentinelSCGAutoConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [xyz/kip/gateway/config/SentinelGatewayConfig.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2026-03-03 00:53:36.674 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2026-03-03 00:53:36.690 [restartedMain] INFO  o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-03 00:53:37.884 [restartedMain] INFO  xyz.kip.GatewayBootApplication - The following 1 profile is active: "dev"
+2026-03-03 00:53:38.174 [restartedMain] INFO  o.springframework.cloud.context.scope.GenericScope - BeanFactory id=9c1c567c-8f82-3d43-90d5-7de604869e18
+2026-03-03 00:53:38.318 [restartedMain] INFO  xyz.kip.gateway.config.SentinelGatewayConfig - Sentinel gateway flow rules initialized, count: 1
+2026-03-03 00:53:38.349 [restartedMain] WARN  o.s.c.g.c.GatewayClassPathWarningAutoConfiguration - 
+
+**********************************************************
+
+The artifact spring-cloud-gateway-server is deprecated. It will be removed in the next major release. Please add spring-cloud-gateway-server-webflux dependency.
+
+**********************************************************
+
+
+2026-03-03 00:53:38.985 [restartedMain] DEBUG o.s.cloud.gateway.config.GatewayProperties - Routes supplied from Gateway Properties: [RouteDefinition{id='auth-service', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/api/auth/**}}], filters=[FilterDefinition{name='StripPrefix', args={parts=2}}], uri=lb://kip-auth-service, order=0, metadata={}, enabled=true}]
+2026-03-03 00:53:39.054 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [After]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Before]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Between]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Cookie]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Header]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Host]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Method]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Path]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Query]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [ReadBody]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [RemoteAddr]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [XForwardedRemoteAddr]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Weight]
+2026-03-03 00:53:39.055 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [CloudFoundryRouteService]
+2026-03-03 00:53:39.075 [restartedMain] INFO  c.a.c.s.gateway.scg.SentinelSCGAutoConfiguration - [Sentinel SpringCloudGateway] register SentinelGatewayFilter with order: -2147483648
+2026-03-03 00:53:39.137 [restartedMain] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 3 endpoints beneath base path '/actuator'
+2026-03-03 00:53:39.158 [restartedMain] INFO  c.a.c.s.gateway.scg.SentinelSCGAutoConfiguration - [Sentinel SpringCloudGateway] register SentinelGatewayBlockExceptionHandler
+2026-03-03 00:53:39.167 [restartedMain] INFO  com.alibaba.nacos.client.logging.NacosLogging - Nacos Logging Adapter Builder: com.alibaba.nacos.logger.adapter.logback14.LogbackNacosLoggingAdapterBuilder
+2026-03-03 00:53:39.168 [restartedMain] INFO  com.alibaba.nacos.client.logging.NacosLogging - Nacos Logging Adapter: com.alibaba.nacos.logger.adapter.logback14.LogbackNacosLoggingAdapter match ch.qos.logback.classic.Logger success.
+2026-03-03 00:53:39.169 [restartedMain] INFO  com.alibaba.nacos.client.logging.NacosLogging - Nacos Logging Adapter Builder: com.alibaba.nacos.logger.adapter.log4j2.Log4j2NacosLoggingAdapterBuilder
+2026-03-03 00:53:39.185 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2026-03-03 00:53:39.185 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2026-03-03 00:53:39.255 [restartedMain] INFO  o.s.b.d.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-03 00:53:39.264 [restartedMain] WARN  o.s.c.g.s.w.s.StarterDeprecatedAutoConfiguration - 
+
+**********************************************************
+
+spring-cloud-starter-gateway is deprecated. It will be removed in the next major release. Please use spring-cloud-starter-gateway-server-webflux instead.
+
+**********************************************************
+
+
+2026-03-03 00:53:39.267 [restartedMain] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-03 00:53:39.303 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2026-03-03 00:53:39.303 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2026-03-03 00:53:51.900 [restartedMain] INFO  c.a.c.s.datasource.converter.SentinelConverter - converter can not convert rules because source is empty
+2026-03-03 00:53:51.908 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2026-03-03 00:53:51.908 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2026-03-03 00:54:04.382 [restartedMain] INFO  c.a.c.s.datasource.converter.SentinelConverter - converter can not convert rules because source is empty
+2026-03-03 00:54:04.500 [restartedMain] INFO  o.s.boot.web.embedded.netty.NettyWebServer - Netty started on port 9527 (http)
+2026-03-03 00:54:04.511 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2026-03-03 00:54:04.511 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2026-03-03 00:54:16.979 [restartedMain] ERROR c.a.cloud.nacos.registry.NacosServiceRegistry - nacos registry, kip-gateway register failed...NacosRegistration{nacosDiscoveryProperties=NacosDiscoveryProperties{serverAddr='10.42.0.125:8848', username='******', password='******', endpoint='', namespace='', watchDelay=30000, logName='', service='kip-gateway', weight=1.0, clusterName='', group='DEFAULT_GROUP', namingLoadCacheAtStart='false', metadata={IPv6=null, preserved.register.source=SPRING_CLOUD}, registerEnabled=true, ip='10.42.0.124', networkInterface='', port=9527, secure=false, accessKey='', secretKey='', heartBeatInterval=null, heartBeatTimeout=null, ipDeleteTimeout=null, instanceEnabled=true, ephemeral=true, failureToleranceEnabled=false}, ipDeleteTimeout=null, failFast=true}},
+com.alibaba.nacos.api.exception.NacosException: Client not connected, current status:STARTING
+	at com.alibaba.nacos.common.remote.client.RpcClient.request(RpcClient.java:647)
+	at com.alibaba.nacos.common.remote.client.RpcClient.request(RpcClient.java:626)
+	at com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy.requestToServer(NamingGrpcClientProxy.java:482)
+	at com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy.doRegisterService(NamingGrpcClientProxy.java:267)
+	at com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy.registerServiceForEphemeral(NamingGrpcClientProxy.java:162)
+	at com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy.registerService(NamingGrpcClientProxy.java:153)
+	at com.alibaba.nacos.client.naming.remote.NamingClientProxyDelegate.registerService(NamingClientProxyDelegate.java:98)
+	at com.alibaba.nacos.client.naming.NacosNamingService.registerInstance(NacosNamingService.java:174)
+	at com.alibaba.cloud.nacos.registry.NacosServiceRegistry.register(NacosServiceRegistry.java:74)
+	at org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration.register(AbstractAutoServiceRegistration.java:264)
+	at com.alibaba.cloud.nacos.registry.NacosAutoServiceRegistration.register(NacosAutoServiceRegistration.java:78)
+	at org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration.start(AbstractAutoServiceRegistration.java:156)
+	at org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration.onApplicationEvent(AbstractAutoServiceRegistration.java:119)
+	at org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration.onApplicationEvent(AbstractAutoServiceRegistration.java:49)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:185)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:178)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:156)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:454)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:387)
+	at org.springframework.boot.web.reactive.context.WebServerManager.start(WebServerManager.java:57)
+	at org.springframework.boot.web.reactive.context.WebServerStartStopLifecycle.start(WebServerStartStopLifecycle.java:41)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:405)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:394)
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.start(DefaultLifecycleProcessor.java:586)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.context.support.DefaultLifecycleProcessor.startBeans(DefaultLifecycleProcessor.java:364)
+	at org.springframework.context.support.DefaultLifecycleProcessor.onRefresh(DefaultLifecycleProcessor.java:310)
+	at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:1006)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:630)
+	at org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext.refresh(ReactiveWebServerApplicationContext.java:66)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1362)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1351)
+	at xyz.kip.GatewayBootApplication.main(GatewayBootApplication.java:20)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+2026-03-03 00:54:16.999 [restartedMain] WARN  o.s.b.w.r.c.AnnotationConfigReactiveWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-03-03 00:54:17.020 [restartedMain] INFO  o.s.b.a.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-03 00:54:17.031 [restartedMain] ERROR org.springframework.boot.SpringApplication - Application run failed
+org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:408)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:394)
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.start(DefaultLifecycleProcessor.java:586)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.context.support.DefaultLifecycleProcessor.startBeans(DefaultLifecycleProcessor.java:364)
+	at org.springframework.context.support.DefaultLifecycleProcessor.onRefresh(DefaultLifecycleProcessor.java:310)
+	at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:1006)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:630)
+	at org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext.refresh(ReactiveWebServerApplicationContext.java:66)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1362)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1351)
+	at xyz.kip.GatewayBootApplication.main(GatewayBootApplication.java:20)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.lang.reflect.UndeclaredThrowableException: null
+	at org.springframework.util.ReflectionUtils.rethrowRuntimeException(ReflectionUtils.java:147)
+	at com.alibaba.cloud.nacos.registry.NacosServiceRegistry.register(NacosServiceRegistry.java:82)
+	at org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration.register(AbstractAutoServiceRegistration.java:264)
+	at com.alibaba.cloud.nacos.registry.NacosAutoServiceRegistration.register(NacosAutoServiceRegistration.java:78)
+	at org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration.start(AbstractAutoServiceRegistration.java:156)
+	at org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration.onApplicationEvent(AbstractAutoServiceRegistration.java:119)
+	at org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration.onApplicationEvent(AbstractAutoServiceRegistration.java:49)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:185)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:178)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:156)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:454)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:387)
+	at org.springframework.boot.web.reactive.context.WebServerManager.start(WebServerManager.java:57)
+	at org.springframework.boot.web.reactive.context.WebServerStartStopLifecycle.start(WebServerStartStopLifecycle.java:41)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:405)
+	... 17 common frames omitted
+Caused by: com.alibaba.nacos.api.exception.NacosException: Client not connected, current status:STARTING
+	at com.alibaba.nacos.common.remote.client.RpcClient.request(RpcClient.java:647)
+	at com.alibaba.nacos.common.remote.client.RpcClient.request(RpcClient.java:626)
+	at com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy.requestToServer(NamingGrpcClientProxy.java:482)
+	at com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy.doRegisterService(NamingGrpcClientProxy.java:267)
+	at com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy.registerServiceForEphemeral(NamingGrpcClientProxy.java:162)
+	at com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy.registerService(NamingGrpcClientProxy.java:153)
+	at com.alibaba.nacos.client.naming.remote.NamingClientProxyDelegate.registerService(NamingClientProxyDelegate.java:98)
+	at com.alibaba.nacos.client.naming.NacosNamingService.registerInstance(NacosNamingService.java:174)
+	at com.alibaba.cloud.nacos.registry.NacosServiceRegistry.register(NacosServiceRegistry.java:74)
+	... 30 common frames omitted
+2026-03-03 00:54:17.037 [Thread-20] INFO  com.alibaba.nacos.common.notify.NotifyCenter - [NotifyCenter] Start destroying Publisher
+2026-03-03 00:54:17.037 [Thread-18] INFO  c.alibaba.nacos.common.http.HttpClientBeanHolder - [HttpClientBeanHolder] Start destroying common HttpClient
+2026-03-03 00:54:17.037 [Thread-20] INFO  com.alibaba.nacos.common.notify.NotifyCenter - [NotifyCenter] Completed destruction of Publisher
+2026-03-03 00:54:17.037 [Thread-12] INFO  c.alibaba.nacos.common.executor.ThreadPoolManager - [ThreadPoolManager] Start destroying ThreadPool
+2026-03-03 00:54:17.037 [Thread-18] INFO  c.alibaba.nacos.common.http.HttpClientBeanHolder - [HttpClientBeanHolder] Completed destruction of HttpClient
+2026-03-03 00:54:17.037 [nacos.publisher-com.alibaba.nacos.common.notify.SlowEvent] ERROR com.alibaba.nacos.common.notify.NotifyCenter - Event listener exception : 
+java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1761)
+	at java.base/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.openEventHandler(DefaultPublisher.java:111)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.run(DefaultPublisher.java:95)
+2026-03-03 00:54:17.038 [Thread-12] INFO  c.alibaba.nacos.common.executor.ThreadPoolManager - [ThreadPoolManager] Completed destruction of ThreadPool
+2026-03-03 00:54:17.037 [nacos.publisher-com.alibaba.nacos.client.naming.event.NamingFuzzyWatchNotifyEvent] ERROR com.alibaba.nacos.common.notify.NotifyCenter - Event listener exception : 
+java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1761)
+	at java.base/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.openEventHandler(DefaultPublisher.java:111)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.run(DefaultPublisher.java:95)
+2026-03-03 00:54:17.037 [nacos.publisher-com.alibaba.nacos.client.config.impl.ConfigFuzzyWatchLoadEvent] ERROR com.alibaba.nacos.common.notify.NotifyCenter - Event listener exception : 
+java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1761)
+	at java.base/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.openEventHandler(DefaultPublisher.java:111)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.run(DefaultPublisher.java:95)
+2026-03-03 00:54:17.037 [nacos.publisher-com.alibaba.nacos.client.naming.event.NamingFuzzyWatchLoadEvent] ERROR com.alibaba.nacos.common.notify.NotifyCenter - Event listener exception : 
+java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1761)
+	at java.base/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.openEventHandler(DefaultPublisher.java:111)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.run(DefaultPublisher.java:95)
+2026-03-03 00:54:17.038 [nacos.publisher-com.alibaba.nacos.client.naming.event.InstancesChangeEvent] ERROR com.alibaba.nacos.common.notify.NotifyCenter - Event listener exception : 
+java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1761)
+	at java.base/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.openEventHandler(DefaultPublisher.java:111)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.run(DefaultPublisher.java:95)
+2026-03-03 00:54:17.037 [nacos.publisher-com.alibaba.nacos.client.config.impl.ConfigFuzzyWatchNotifyEvent] ERROR com.alibaba.nacos.common.notify.NotifyCenter - Event listener exception : 
+java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1761)
+	at java.base/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.openEventHandler(DefaultPublisher.java:111)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.run(DefaultPublisher.java:95)
+2026-03-03 00:56:17.090 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2026-03-03 00:56:17.111 [restartedMain] INFO  o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-03 00:56:18.376 [restartedMain] INFO  xyz.kip.GatewayBootApplication - The following 1 profile is active: "dev"
+2026-03-03 00:56:18.683 [restartedMain] INFO  o.springframework.cloud.context.scope.GenericScope - BeanFactory id=94ee7943-8417-3c60-9094-7452c3f6b2aa
+2026-03-03 00:56:18.843 [restartedMain] INFO  xyz.kip.gateway.config.SentinelGatewayConfig - Sentinel gateway flow rules initialized, count: 1
+2026-03-03 00:56:18.876 [restartedMain] WARN  o.s.c.g.c.GatewayClassPathWarningAutoConfiguration - 
+
+**********************************************************
+
+The artifact spring-cloud-gateway-server is deprecated. It will be removed in the next major release. Please add spring-cloud-gateway-server-webflux dependency.
+
+**********************************************************
+
+
+2026-03-03 00:56:19.315 [restartedMain] DEBUG o.s.cloud.gateway.config.GatewayProperties - Routes supplied from Gateway Properties: [RouteDefinition{id='auth-service', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/api/auth/**}}], filters=[FilterDefinition{name='StripPrefix', args={parts=2}}], uri=lb://kip-auth-service, order=0, metadata={}, enabled=true}]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [After]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Before]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Between]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Cookie]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Header]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Host]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Method]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Path]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Query]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [ReadBody]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [RemoteAddr]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [XForwardedRemoteAddr]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Weight]
+2026-03-03 00:56:19.394 [restartedMain] INFO  o.s.c.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [CloudFoundryRouteService]
+2026-03-03 00:56:19.416 [restartedMain] INFO  c.a.c.s.gateway.scg.SentinelSCGAutoConfiguration - [Sentinel SpringCloudGateway] register SentinelGatewayFilter with order: -2147483648
+2026-03-03 00:56:19.481 [restartedMain] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 3 endpoints beneath base path '/actuator'
+2026-03-03 00:56:19.504 [restartedMain] INFO  c.a.c.s.gateway.scg.SentinelSCGAutoConfiguration - [Sentinel SpringCloudGateway] register SentinelGatewayBlockExceptionHandler
+2026-03-03 00:56:19.546 [restartedMain] INFO  o.s.b.d.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-03 00:56:19.553 [restartedMain] WARN  o.s.c.g.s.w.s.StarterDeprecatedAutoConfiguration - 
+
+**********************************************************
+
+spring-cloud-starter-gateway is deprecated. It will be removed in the next major release. Please use spring-cloud-starter-gateway-server-webflux instead.
+
+**********************************************************
+
+
+2026-03-03 00:56:19.556 [restartedMain] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-03 00:56:19.595 [restartedMain] INFO  com.alibaba.nacos.client.logging.NacosLogging - Nacos Logging Adapter Builder: com.alibaba.nacos.logger.adapter.logback14.LogbackNacosLoggingAdapterBuilder
+2026-03-03 00:56:19.595 [restartedMain] INFO  com.alibaba.nacos.client.logging.NacosLogging - Nacos Logging Adapter: com.alibaba.nacos.logger.adapter.logback14.LogbackNacosLoggingAdapter match ch.qos.logback.classic.Logger success.
+2026-03-03 00:56:19.597 [restartedMain] INFO  com.alibaba.nacos.client.logging.NacosLogging - Nacos Logging Adapter Builder: com.alibaba.nacos.logger.adapter.log4j2.Log4j2NacosLoggingAdapterBuilder
+2026-03-03 00:56:19.615 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2026-03-03 00:56:19.615 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2026-03-03 00:56:32.225 [restartedMain] INFO  c.a.c.s.datasource.converter.SentinelConverter - converter can not convert rules because source is empty
+2026-03-03 00:56:32.234 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2026-03-03 00:56:32.234 [restartedMain] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2026-03-03 00:56:44.685 [restartedMain] INFO  c.a.c.s.datasource.converter.SentinelConverter - converter can not convert rules because source is empty
+2026-03-03 00:56:44.771 [restartedMain] INFO  o.s.boot.web.embedded.netty.NettyWebServer - Netty started on port 9527 (http)
+2026-03-03 00:56:44.793 [restartedMain] DEBUG o.s.c.gateway.route.RouteDefinitionRouteLocator - RouteDefinition auth-service applying {_genkey_0=/api/auth/**} to Path
+2026-03-03 00:56:44.800 [restartedMain] DEBUG o.s.c.gateway.route.RouteDefinitionRouteLocator - RouteDefinition auth-service applying filter {parts=2} to StripPrefix
+2026-03-03 00:56:44.803 [restartedMain] DEBUG o.s.c.gateway.route.RouteDefinitionRouteLocator - RouteDefinition matched: auth-service
+2026-03-03 00:56:44.805 [restartedMain] DEBUG o.s.cloud.gateway.filter.GatewayMetricsFilter - New routes count: 1
+2026-03-03 00:56:44.806 [restartedMain] INFO  xyz.kip.GatewayBootApplication - Started GatewayBootApplication in 28.9 seconds (process running for 29.093)
+2026-03-03 00:58:28.170 [Thread-15] INFO  c.alibaba.nacos.common.executor.ThreadPoolManager - [ThreadPoolManager] Start destroying ThreadPool
+2026-03-03 00:58:28.170 [Thread-21] INFO  c.alibaba.nacos.common.http.HttpClientBeanHolder - [HttpClientBeanHolder] Start destroying common HttpClient
+2026-03-03 00:58:28.170 [Thread-23] INFO  com.alibaba.nacos.common.notify.NotifyCenter - [NotifyCenter] Start destroying Publisher
+2026-03-03 00:58:28.170 [Thread-23] INFO  com.alibaba.nacos.common.notify.NotifyCenter - [NotifyCenter] Completed destruction of Publisher
+2026-03-03 00:58:28.171 [Thread-15] INFO  c.alibaba.nacos.common.executor.ThreadPoolManager - [ThreadPoolManager] Completed destruction of ThreadPool
+2026-03-03 00:58:28.171 [Thread-21] INFO  c.alibaba.nacos.common.http.HttpClientBeanHolder - [HttpClientBeanHolder] Completed destruction of HttpClient
+2026-03-03 00:58:28.171 [nacos.publisher-com.alibaba.nacos.client.config.impl.ConfigFuzzyWatchNotifyEvent] ERROR com.alibaba.nacos.common.notify.NotifyCenter - Event listener exception : 
+java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1761)
+	at java.base/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.openEventHandler(DefaultPublisher.java:111)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.run(DefaultPublisher.java:95)
+2026-03-03 00:58:28.171 [nacos.publisher-com.alibaba.nacos.client.config.impl.ConfigFuzzyWatchLoadEvent] ERROR com.alibaba.nacos.common.notify.NotifyCenter - Event listener exception : 
+java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1761)
+	at java.base/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.openEventHandler(DefaultPublisher.java:111)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.run(DefaultPublisher.java:95)
+2026-03-03 00:58:28.171 [nacos.publisher-com.alibaba.nacos.common.notify.SlowEvent] ERROR com.alibaba.nacos.common.notify.NotifyCenter - Event listener exception : 
+java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1761)
+	at java.base/java.util.concurrent.ArrayBlockingQueue.take(ArrayBlockingQueue.java:420)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.openEventHandler(DefaultPublisher.java:111)
+	at com.alibaba.nacos.common.notify.DefaultPublisher.run(DefaultPublisher.java:95)
+2026-03-03 00:58:28.177 [SpringApplicationShutdownHook] INFO  o.s.boot.web.embedded.netty.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-03 00:58:28.179 [netty-shutdown] INFO  o.s.boot.web.embedded.netty.GracefulShutdown - Graceful shutdown complete

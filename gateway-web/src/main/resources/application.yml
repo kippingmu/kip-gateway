@@ -1,93 +1,106 @@
-spring:
-  profiles:
-    active: dev
-  application:
-    name: kip-gateway
-  cloud:
-    gateway:
-      # 路由配置
+spring: # Spring Boot / Spring Cloud 顶层配置入口
+  #profiles:                                         # Spring Profiles 配置（按环境切换配置）
+  #active: dev                                     # 当前激活的环境（dev/test/prod 等）；这里被注释表示未启用
+  application: # 应用基础信息
+    name: kip-gateway                                # 应用名（会用于日志、注册中心、配置中心的默认标识等）
+  cloud: # Spring Cloud 相关配置入口
+    client:
+      hostname: localhost                            # 显式指定主机名，避免受限环境下反查失败
+      ip-address: 127.0.0.1                          # 显式指定本机IP，避免网络接口解析报错
+    inetutils:
+      default-hostname: localhost
+      default-ip-address: 127.0.0.1
+    gateway: # Spring Cloud Gateway 配置入口
+      # 路由配置                                      # 路由规则：匹配请求并转发到后端服务
       server:
         webflux:
           routes:
-            - id: auth-service
-              uri: lb://kip-auth-service
-              predicates:
-                - Path=/api/auth/**
-              filters:
-                - name: StripPrefix
-                  args:
-                    parts: 2
-    nacos:
-      discovery:
-        server-addr: 10.42.0.125:8848
-        enabled: true
-        register-enabled: true
-        service: kip-gateway
-        group: DEFAULT_GROUP
-        namespace: ""
-      config:
-        server-addr: 10.42.0.125:8848
-        enabled: true
-        file-extension: yml
-        group: DEFAULT_GROUP
-        namespace: ""
+            - id: auth-service                           # 路由 ID（唯一；便于日志与管理端点查看）
+              uri: lb://kip-auth-service                 # 转发目标：lb:// 表示走负载均衡（从注册中心拿实例）
+              predicates: # 路由断言：满足条件才命中该路由
+                - Path=/api/auth/**                      # 按路径匹配：/api/auth/ 下的所有请求
+              filters: # 路由过滤器：对请求/响应做加工
+                - name: StripPrefix                      # 内置过滤器：去掉路径前缀段
+                  args: # 过滤器参数
+                    parts: 2                             # 去掉前 2 段路径；例如 /api/auth/login -> /login
+          discovery:
+            locator:
+              enabled: true
+
+    nacos: # Spring Cloud Alibaba Nacos 配置入口
+      discovery: # Nacos 注册中心（服务发现）配置
+        server-addr: 10.42.0.125:8848                # Nacos Server 地址（服务注册/发现都连它）
+        enabled: true                                # 启用 Nacos Discovery（注册/发现）
+        register-enabled: true                       # 允许将自身注册到 Nacos
+        service: kip-gateway                         # 注册到 Nacos 的服务名（不写默认用 spring.application.name）
+        group: DEFAULT_GROUP                         # 服务分组（用于隔离不同业务/环境的服务实例）
+        namespace: ""                                # 命名空间 ID（空字符串通常表示 public/默认命名空间）
+      config: # Nacos 配置中心（动态配置）配置
+        server-addr: 10.42.0.125:8848                # Nacos Server 地址（拉配置/监听变更）
+        enabled: false                               # 暂不启用 Nacos Config（仅完成注册需求）
+        file-extension: yml                          # 配置文件扩展名（影响 DataId 拼接与解析）
+        group: DEFAULT_GROUP                         # 配置分组（隔离不同配置集合）
+        namespace: ""                                # 配置命名空间 ID（空字符串通常表示 public/默认命名空间）
+
     sentinel: # Sentinel 总配置入口（Spring Cloud Alibaba）
-      enabled: true                         # 是否启用 Sentinel 自动装配与拦截；true=启用限流/熔断等能力
+      enabled: true                                  # 是否启用 Sentinel 自动装配/拦截（限流/熔断/降级能力开关）
 
-      transport: # Sentinel 与 Dashboard 的通讯配置（监控上报/推送规则通道）
-        dashboard: 10.42.0.125:8080         # Sentinel Dashboard 地址；用于展示监控、管理规则（可推送但生产更常用数据源）
-        port: 8719                          # 本应用本机开放的 transport 通讯端口（Dashboard 连接/推送规则会用）
-        # 若 8719 被占用，Sentinel 可能会自动尝试 +1 递增端口（视版本实现）
+      transport: # Sentinel 与 Dashboard 的通讯配置（心跳上报/推送规则通道）
+        dashboard: 10.42.0.125:8080                  # Sentinel Dashboard 地址（监控展示/规则管理入口）
+        port: 8719                                   # 本地 transport 端口（Dashboard 与客户端通信/推送规则）
+        # 若 8719 被占用，Sentinel 可能会自动尝试 +1 递增端口（实现因版本而异）  # 备注：端口占用时的行为提示
 
-      datasource: # 规则数据源配置：把规则从外部系统加载进应用，并监听变更（推荐生产做法）
-        nacos-degrade-rules: # 数据源名称（自定义 key）；通常用于区分不同规则集
-          nacos: # 数据源类型：Nacos（配置中心作为规则存储与下发）
-            server-addr: 10.42.0.125:8848   # Nacos 服务地址（规则从这里拉取/订阅）
-            dataId: sentinel-degrade-rules  # Nacos 中该规则配置的 dataId（对应一份配置文件/配置项）
-            groupId: DEFAULT_GROUP          # Nacos 配置分组（不写一般也是 DEFAULT_GROUP）
-            rule-type: degrade              # 规则类型：degrade=熔断降级规则（RT/异常比例/异常数触发熔断）
+      datasource: # 规则数据源：从外部加载规则并监听变更（生产推荐用 Nacos/DB）
+        nacos-degrade-rules: # 数据源名称（自定义 key，用于区分不同规则集）
+          nacos: # 数据源类型：Nacos（规则存储在 Nacos 配置中心）
+            server-addr: 10.42.0.125:8848            # Nacos 地址（从此处拉取/订阅规则）
+            dataId: sentinel-degrade-rules           # 降级规则在 Nacos 的 DataId（对应一份配置项）
+            groupId: DEFAULT_GROUP                   # 降级规则所属分组
+            rule-type: degrade                       # 规则类型：degrade=熔断/降级（RT/异常比例/异常数触发）
 
-        nacos-flow-rules: # 另一个数据源名称（自定义 key）
-          nacos: # 同样是 Nacos 数据源
-            server-addr: 10.42.0.125:8848   # Nacos 服务地址（可与上面复用）
-            dataId: sentinel-flow-rules     # Nacos 中流控规则的 dataId
-            groupId: DEFAULT_GROUP          # Nacos 配置分组
-            rule-type: flow                 # 规则类型：flow=流控规则（QPS/并发线程数/调用关系等维度限流）
+        nacos-flow-rules: # 另一个数据源名称（流控规则集）
+          nacos: # 同样使用 Nacos 作为规则数据源
+            server-addr: 10.42.0.125:8848            # Nacos 地址（与上面可复用）
+            dataId: sentinel-flow-rules              # 流控规则在 Nacos 的 DataId
+            groupId: DEFAULT_GROUP                   # 流控规则所属分组
+            rule-type: flow                          # 规则类型：flow=流量控制（QPS/线程数/调用关系维度）
 
-  jackson:
-    default-property-inclusion: non_empty
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
+  jackson: # Jackson JSON 序列化/反序列化配置
+    default-property-inclusion: non_empty            # JSON 输出时忽略空值/空集合等（减少返回字段）
+    date-format: yyyy-MM-dd HH:mm:ss                 # 日期序列化格式（全局）
+    time-zone: GMT+8                                 # Jackson 使用的时区（影响 Date/Time 的序列化）
 
-server:
-  port: 9527
-  servlet:
-    context-path: /
+server: # Web Server（内嵌容器）配置
+  port: 8888                                         # 服务监听端口（网关对外端口）
+  servlet: # Servlet 容器相关配置（注意：Gateway/WebFlux 一般不走 servlet）
+    context-path: /                                  # 应用上下文路径（根路径；对 WebFlux 通常无效/不推荐依赖）
 
-logging:
-  level:
-    root: INFO
-    org.springframework.cloud.gateway: DEBUG
-    xyz.kip: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
-  file:
-    name: logs/gateway.log
-    max-size: 100MB
-    max-history: 30
+logging: # 日志配置
+  level: # 日志级别设置
+    root: INFO                                       # 根日志级别（默认 INFO）
+    org.springframework.cloud.gateway: DEBUG         # Gateway 相关包输出 DEBUG（便于排查路由/过滤器）
+    xyz.kip: DEBUG                                   # 你们业务包输出 DEBUG（便于定位业务日志）
+  pattern: # 日志输出格式
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n" # 控制台日志格式
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"    # 文件日志格式
+  file: # 文件日志相关
+    name: logs/gateway.log                            # 日志文件路径与文件名（相对路径在工作目录下）
+  logback: # Logback 特定配置入口
+    rolling policy: # 滚动策略配置（按大小/时间切割）
+      max-file-size: 100MB                           # 单个日志文件最大大小（超出触发滚动）
+      max-history: 30                                # 保留历史日志文件数量/天数（取决于具体滚动策略）
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,gateway,prometheus
-  endpoint:
-    health:
-      show-details: always
-    gateway:
-      enabled: true
-  prometheus:
-    metrics:
-      export:
-        enabled: true
+management: # Spring Boot Actuator 管理端点配置
+  endpoints: # 端点集合配置
+    web: # Web 暴露方式（HTTP）
+      exposure: # 暴露哪些端点
+        include: health,info,metrics,gateway,prometheus # 允许对外暴露的端点列表（逗号分隔）
+  endpoint: # 单个端点的细粒度配置
+    health: # health 端点配置
+      show-details: always                           # health 详情展示策略（always=总是展示详细信息）
+    gateway: # gateway 端点配置（actuator/gateway）
+      access: none                                   # 访问控制（不同版本含义略有差异；这里表示禁用/不允许访问）
+  prometheus: # Prometheus 指标导出相关配置
+    metrics: # 指标配置
+      export: # 导出器配置
+        enabled: true                                # 是否启用 Prometheus 指标导出（/actuator/prometheus）
