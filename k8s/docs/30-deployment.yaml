@@ -1,0 +1,91 @@
+# ========================= 30-deployment.yaml ========================= # 文件名建议：30-deployment.yaml
+apiVersion: apps/v1 # K8s API 版本：apps/v1
+kind: Deployment # 资源类型：无状态部署
+metadata: # 元数据
+  name: demo-user-svc # Deployment 名称
+  namespace: demo # 所在命名空间
+  labels: # 推荐的标准标签集（便于观测/治理）
+    app.kubernetes.io/name: demo-user-svc # 应用名
+    app.kubernetes.io/instance: demo-user-svc # 实例名（多套部署时有用）
+    app.kubernetes.io/version: "1.0.0" # 应用版本（示例）
+    app.kubernetes.io/component: backend # 组件类型
+spec: # 期望状态
+  replicas: 2 # 副本数（生产通常 >=2）
+  revisionHistoryLimit: 5 # 保留历史 ReplicaSet 数量（便于回滚）
+  strategy: # 更新策略
+    type: RollingUpdate # 滚动更新
+    rollingUpdate: # 滚动更新参数
+      maxSurge: 1 # 更新时额外创建的 Pod 数
+      maxUnavailable: 0 # 更新时允许不可用的 Pod 数（0 表示不停机）
+  selector: # 选择器（必须与 Pod labels 匹配）
+    matchLabels: # 匹配标签
+      app: demo-user-svc # Service/Deployment 常用的 selector 标签
+  template: # Pod 模板
+    metadata: # Pod 元数据
+      labels: # Pod 标签
+        app: demo-user-svc # selector 对应标签（必须匹配）
+        app.kubernetes.io/name: demo-user-svc # 标准标签（建议补齐）
+      annotations: # Pod 注解（可放 Prometheus 抓取信息等）
+        prometheus.io/scrape: "true" # Prometheus 抓取开关（示例）
+        prometheus.io/port: "8080" # 指标端口（示例）
+        prometheus.io/path: "/actuator/prometheus" # 指标路径（示例）
+    spec: # Pod 规格
+      serviceAccountName: demo-user-svc-sa # 绑定 ServiceAccount
+      terminationGracePeriodSeconds: 30 # 优雅停止等待时间（配合应用 shutdown）
+      imagePullSecrets: # 私有仓库拉镜像需要（如不需要可删除）
+        - name: regcred # 镜像仓库凭证 Secret 名称（示例）
+      securityContext: # Pod 级安全上下文
+        runAsNonRoot: true # 强制非 root
+        seccompProfile: # 系统调用过滤（推荐）
+          type: RuntimeDefault # 使用运行时默认策略
+      containers: # 容器列表
+        - name: demo-user-svc # 容器名
+          image: registry.example.com/demo/demo-user-svc:1.0.0 # 镜像地址（请替换）
+          imagePullPolicy: IfNotPresent # 拉取策略（生产常用 IfNotPresent 或 Always）
+          ports: # 容器端口
+            - name: http # 端口名（便于 Service/Ingress 引用）
+              containerPort: 8080 # 容器监听端口
+              protocol: TCP # 协议
+          envFrom: # 从 ConfigMap/Secret 批量注入环境变量
+            - configMapRef: # 引用 ConfigMap
+                name: demo-user-svc-config # ConfigMap 名称
+            - secretRef: # 引用 Secret
+                name: demo-user-svc-secret # Secret 名称
+          resources: # 资源请求与限制（非常关键）
+            requests: # 调度时保证的最小资源
+              cpu: "200m" # CPU 请求（示例）
+              memory: "512Mi" # 内存请求（示例）
+            limits: # 运行时上限（避免单 Pod 吃光节点）
+              cpu: "1000m" # CPU 上限（示例）
+              memory: "1024Mi" # 内存上限（示例）
+          securityContext: # 容器级安全上下文
+            allowPrivilegeEscalation: false # 禁止提权
+            readOnlyRootFilesystem: true # 根文件系统只读（建议配合 tmp volume）
+            capabilities: # Linux capabilities
+              drop: ["ALL"] # 移除所有额外能力
+          volumeMounts: # 挂载卷（给只读 rootfs 的写入目录）
+            - name: tmp # 卷名
+              mountPath: /tmp # Java/框架常用临时目录
+          readinessProbe: # 就绪探针：不通过则不接流量
+            httpGet: # HTTP 探测
+              path: /actuator/health/readiness # Spring Boot readiness（示例）
+              port: http # 引用端口名
+            initialDelaySeconds: 10 # 初次延迟
+            periodSeconds: 5 # 探测周期
+            timeoutSeconds: 2 # 超时
+            failureThreshold: 6 # 连续失败次数后判定失败
+          livenessProbe: # 存活探针：不通过则重启容器
+            httpGet: # HTTP 探测
+              path: /actuator/health/liveness # Spring Boot liveness（示例）
+              port: http # 引用端口名
+            initialDelaySeconds: 30 # 初次延迟（给 JVM 冷启动时间）
+            periodSeconds: 10 # 探测周期
+            timeoutSeconds: 2 # 超时
+            failureThreshold: 3 # 连续失败次数
+          lifecycle: # 生命周期钩子
+            preStop: # 停止前钩子（配合优雅下线）
+              exec: # 执行命令
+                command: ["sh", "-c", "sleep 10"] # 先睡眠，给 LB/Service 摘除时间（示例）
+      volumes: # Pod 卷定义
+        - name: tmp # 卷名
+          emptyDir: {} # 临时目录（Pod 生命周期内有效）

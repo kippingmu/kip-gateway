@@ -1,0 +1,16 @@
+# ========================= 10-configmap.yaml ========================= # 文件名建议：10-configmap.yaml
+apiVersion: v1 # K8s API 版本：v1
+kind: ConfigMap # 资源类型：配置映射（非敏感配置）
+metadata: # 元数据
+  name: demo-user-svc-config # ConfigMap 名称（与服务关联）
+  namespace: demo # 所在命名空间
+  labels: # 通用标签
+    app.kubernetes.io/name: demo-user-svc # 应用名
+    app.kubernetes.io/component: backend # 组件类型
+data: # 配置键值（字符串）
+  SPRING_PROFILES_ACTIVE: "prod" # Spring 激活 profile（示例：prod）
+  SERVER_PORT: "8080" # 服务端口（容器内）
+  JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75 -XX:+UseG1GC" # JVM 通用参数（可按需调整）
+  LOGGING_LEVEL_ROOT: "INFO" # 根日志级别（示例）
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,prometheus" # Actuator 暴露端点（示例）
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true" # 允许 liveness/readiness probes（Spring Boot 2.3+）

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kip-gateway
+  labels:
+    app: kip-gateway
+  annotations:
+    # Adjust class as needed, e.g., nginx or traefik
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kip-gateway
+                port:
+                  number: 80
+

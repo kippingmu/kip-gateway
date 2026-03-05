@@ -1,0 +1,17 @@
+# ========================= 40-service.yaml ========================= # 文件名建议：40-service.yaml
+apiVersion: v1 # K8s API 版本：v1
+kind: Service # 资源类型：服务发现与负载均衡（集群内）
+metadata: # 元数据
+  name: demo-user-svc # Service 名称（通常与 Deployment 同名）
+  namespace: demo # 所在命名空间
+  labels: # 通用标签
+    app.kubernetes.io/name: demo-user-svc # 应用名
+spec: # Service 规格
+  type: ClusterIP # 集群内虚拟 IP（最常用）
+  selector: # 选择后端 Pod
+    app: demo-user-svc # 选择 app=demo-user-svc 的 Pod
+  ports: # 暴露端口列表
+    - name: http # 端口名
+      port: 80 # Service 端口（对内暴露）
+      targetPort: http # 转发到容器端口（引用端口名）
+      protocol: TCP # 协议

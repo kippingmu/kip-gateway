@@ -1,0 +1,25 @@
+# ========================= 80-networkpolicy.yaml ========================= # 文件名建议：80-networkpolicy.yaml（可选：需要集群支持 NetworkPolicy）
+apiVersion: networking.k8s.io/v1 # K8s API 版本：networking.k8s.io/v1
+kind: NetworkPolicy # 资源类型：网络策略（东西向隔离）
+metadata: # 元数据
+  name: demo-user-svc-default # 策略名称
+  namespace: demo # 所在命名空间
+spec: # 策略规格
+  podSelector: # 选择要应用策略的 Pod
+    matchLabels: # 标签匹配
+      app: demo-user-svc # 目标 Pod
+  policyTypes: ["Ingress", "Egress"] # 同时限制入站/出站
+  ingress: # 入站规则（只放行来自 Ingress Controller 或同命名空间调用等）
+    - from: # 来源列表
+        - namespaceSelector: {} # 示例：允许来自所有命名空间（生产建议收紧）
+      ports: # 放行端口
+        - protocol: TCP # 协议
+          port: 8080 # 容器端口（注意：这里是 Pod 端口）
+  egress: # 出站规则（示例：放行到 DNS + 数据库，生产应更精细）
+    - to: # 目的列表
+        - namespaceSelector: {} # 示例：允许到所有命名空间（生产建议收紧）
+      ports: # 放行端口
+        - protocol: UDP # DNS 常用 UDP
+          port: 53 # DNS 端口
+        - protocol: TCP # 数据库示例用 TCP
+          port: 5432 # PostgreSQL 端口（示例）

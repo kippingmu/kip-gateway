@@ -1,0 +1,20 @@
+# ========================= 60-hpa.yaml ========================= # 文件名建议：60-hpa.yaml
+apiVersion: autoscaling/v2 # K8s API 版本：autoscaling/v2（推荐）
+kind: HorizontalPodAutoscaler # 资源类型：水平自动扩缩容
+metadata: # 元数据
+  name: demo-user-svc # HPA 名称
+  namespace: demo # 所在命名空间
+spec: # HPA 规格
+  scaleTargetRef: # 绑定目标
+    apiVersion: apps/v1 # 目标 API 版本
+    kind: Deployment # 目标类型
+    name: demo-user-svc # 目标名称
+  minReplicas: 2 # 最小副本数
+  maxReplicas: 10 # 最大副本数
+  metrics: # 扩缩容指标
+    - type: Resource # 资源指标
+      resource: # 资源类型指标
+        name: cpu # 使用 CPU
+        target: # 目标值
+          type: Utilization # 使用率
+          averageUtilization: 70 # 目标平均 CPU 使用率（示例）

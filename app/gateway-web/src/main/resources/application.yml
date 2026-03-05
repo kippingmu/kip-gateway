@@ -1,0 +1,41 @@
+# 通用配置 - 所有环境共享
+# 环境特定配置请查看 application-dev.yml 和 application-prod.yml
+# 动态配置（路由、规则等）请查看 nacos-todo.yml（需上传到 Nacos 配置中心）
+# 本地开发配置请使用 application-local.yml（不提交到 Git）
+
+spring:
+  profiles:
+    # 如果 application-local.yml 存在，会自动加载（优先级最高）
+    include: local
+  application:
+    name: kip-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+
+  jackson:
+    default-property-inclusion: non_empty
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+server:
+  servlet:
+    context-path: /
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway,prometheus
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      access: none
+  prometheus:
+    metrics:
+      export:
+        enabled: true

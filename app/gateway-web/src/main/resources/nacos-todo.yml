@@ -1,0 +1,57 @@
+# 此文件包含适合从 Nacos 配置中心动态获取的配置项
+# 使用方式：将此文件内容上传到 Nacos 配置中心
+# DataId: kip-gateway.yml 或 kip-gateway-${profile}.yml
+# Group: DEFAULT_GROUP
+
+spring:
+  cloud:
+    gateway:
+      # 动态路由配置 - 适合在 Nacos 中管理，支持热更新
+      server:
+        webflux:
+          routes:
+            - id: auth-service
+              uri: lb://kip-auth-service
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - name: StripPrefix
+                  args:
+                    parts: 2
+
+            # 可以在 Nacos 中动态添加更多路由
+            # - id: user-service
+            #   uri: lb://kip-user-service
+            #   predicates:
+            #     - Path=/api/user/**
+            #   filters:
+            #     - name: StripPrefix
+            #       args:
+            #         parts: 2
+
+    sentinel:
+      # Sentinel 规则数据源配置 - 从 Nacos 动态加载规则
+      datasource:
+        nacos-degrade-rules:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            dataId: sentinel-degrade-rules
+            groupId: DEFAULT_GROUP
+            rule-type: degrade
+
+        nacos-flow-rules:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            dataId: sentinel-flow-rules
+            groupId: DEFAULT_GROUP
+            rule-type: flow
+
+# 业务配置示例 - 可根据实际需求添加
+# gateway:
+#   auth:
+#     enabled: true
+#     whitelist:
+#       - /api/auth/login
+#       - /api/auth/register
+#   rate-limit:
+#     default-qps: 100

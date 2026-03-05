@@ -1,0 +1,7 @@
+# ========================= 00-namespace.yaml ========================= # 文件名建议：00-namespace.yaml
+apiVersion: v1 # K8s API 版本：v1
+kind: Namespace # 资源类型：命名空间
+metadata: # 元数据
+  name: demo # 命名空间名称（建议按环境：dev/test/prod）
+  labels: # 命名空间标签
+    app.kubernetes.io/part-of: demo-platform # 归属系统/平台标识

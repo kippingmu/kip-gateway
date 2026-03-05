@@ -1,0 +1,11 @@
+# ========================= 70-pdb.yaml ========================= # 文件名建议：70-pdb.yaml
+apiVersion: policy/v1 # K8s API 版本：policy/v1
+kind: PodDisruptionBudget # 资源类型：可用性预算（避免维护/驱逐全挂）
+metadata: # 元数据
+  name: demo-user-svc # PDB 名称
+  namespace: demo # 所在命名空间
+spec: # PDB 规格
+  minAvailable: 1 # 最少可用 Pod 数（副本=2 时推荐 1）
+  selector: # 选择器
+    matchLabels: # 标签匹配
+      app: demo-user-svc # 匹配目标 Pod 标签

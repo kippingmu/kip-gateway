@@ -1,0 +1,25 @@
+# ========================= 50-ingress.yaml ========================= # 文件名建议：50-ingress.yaml
+apiVersion: networking.k8s.io/v1 # K8s API 版本：networking.k8s.io/v1
+kind: Ingress # 资源类型：七层入口（需要 Ingress Controller）
+metadata: # 元数据
+  name: demo-user-svc # Ingress 名称
+  namespace: demo # 所在命名空间
+  annotations: # 控制器相关注解（以 nginx 为例，不同控制器不同）
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60" # 上游读超时（示例）
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60" # 上游写超时（示例）
+spec: # Ingress 规格
+  ingressClassName: nginx # IngressClass（示例：nginx；按你集群实际填写）
+  tls: # TLS 配置（可选但生产推荐）
+    - hosts: ["user.demo.example.com"] # 证书绑定域名
+      secretName: demo-tls # TLS 证书 Secret（示例：提前创建）
+  rules: # 路由规则
+    - host: user.demo.example.com # 访问域名
+      http: # HTTP 路由
+        paths: # 路径规则列表
+          - path: / # 路径前缀
+            pathType: Prefix # 匹配类型：前缀匹配
+            backend: # 后端服务
+              service: # 指向 Service
+                name: demo-user-svc # Service 名称
+                port: # Service 端口
+                  number: 80 # Service 端口号

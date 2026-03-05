@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kip-gateway:latest
+    container_name: kip-gateway
+    ports:
+      - "9527:9527"
+    environment:
+      SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR: "10.42.0.125:8848"
+      SPRING_CLOUD_NACOS_DISCOVERY_ENABLED: "true"
+      SPRING_CLOUD_NACOS_DISCOVERY_REGISTER_ENABLED: "true"
+      SPRING_CLOUD_SENTINEL_TRANSPORT_DASHBOARD: "10.42.0.125:8090"
+      # Uncomment if your environment restricts hostname lookup
+      # SPRING_CLOUD_CLIENT_HOSTNAME: "localhost"
+      # SPRING_CLOUD_CLIENT_IP_ADDRESS: "127.0.0.1"
+    restart: unless-stopped
+

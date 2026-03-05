@@ -1,0 +1,43 @@
+# 生产环境配置
+spring:
+  cloud:
+    nacos:
+      discovery:
+        # 生产环境 Nacos 集群地址，建议使用环境变量或配置中心
+        server-addr: ${NACOS_SERVER_ADDR:nacos-cluster.prod.svc:8848}
+        enabled: true
+        register-enabled: true
+        service: kip-gateway
+        group: DEFAULT_GROUP
+        namespace: ${NACOS_NAMESPACE:prod}
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:nacos-cluster.prod.svc:8848}
+        enabled: true
+        file-extension: yml
+        group: DEFAULT_GROUP
+        namespace: ${NACOS_NAMESPACE:prod}
+
+    sentinel:
+      enabled: true
+      transport:
+        # 生产环境 Sentinel Dashboard 地址
+        dashboard: ${SENTINEL_DASHBOARD:sentinel-dashboard.prod.svc:8080}
+        port: 8719
+
+server:
+  port: ${SERVER_PORT:8888}
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: INFO
+    xyz.kip: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+  file:
+    name: logs/gateway.log
+  logback:
+    rolling policy:
+      max-file-size: 100MB
+      max-history: 30
