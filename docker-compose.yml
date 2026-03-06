@@ -15,7 +15,7 @@ services:
       SPRING_CLOUD_NACOS_DISCOVERY_REGISTER_ENABLED: "true"
       SPRING_CLOUD_SENTINEL_TRANSPORT_DASHBOARD: "10.42.0.125:8090"
       # Uncomment if your environment restricts hostname lookup
-      # SPRING_CLOUD_CLIENT_HOSTNAME: "localhost"
+      # SPRING_CLOUD_CLIENT_HOSTNAME: "10.42.0.125"
       # SPRING_CLOUD_CLIENT_IP_ADDRESS: "127.0.0.1"
     restart: unless-stopped
 

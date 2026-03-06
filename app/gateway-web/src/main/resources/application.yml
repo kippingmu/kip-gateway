@@ -4,17 +4,24 @@
 # 本地开发配置请使用 application-local.yml（不提交到 Git）
 
 spring:
+  config:
+    import: "optional:nacos:"  # 可选的 Nacos 配置导入，避免启动失败
+
   profiles:
-    # 如果 application-local.yml 存在，会自动加载（优先级最高）
-    include: local
+    active: dev
+
   application:
     name: kip-gateway
 
   cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false  # 禁用 Nacos 配置导入检查
     gateway:
       discovery:
         locator:
-          enabled: true
+          enabled: true  # 启用服务发现路由
 
   jackson:
     default-property-inclusion: non_empty
@@ -34,7 +41,7 @@ management:
     health:
       show-details: always
     gateway:
-      access: none
+      enabled: true
   prometheus:
     metrics:
       export:

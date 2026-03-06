@@ -1,24 +1,73 @@
 package xyz.kip.gateway.config;
 
+import com.alibaba.csp.sentinel.adapter.gateway.common.SentinelGatewayConstants;
+import com.alibaba.csp.sentinel.adapter.gateway.common.api.ApiDefinition;
+import com.alibaba.csp.sentinel.adapter.gateway.common.api.ApiPathPredicateItem;
+import com.alibaba.csp.sentinel.adapter.gateway.common.api.ApiPredicateItem;
+import com.alibaba.csp.sentinel.adapter.gateway.common.api.GatewayApiDefinitionManager;
 import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayFlowRule;
 import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayRuleManager;
+import com.alibaba.csp.sentinel.adapter.gateway.sc.SentinelGatewayFilter;
+import com.alibaba.csp.sentinel.adapter.gateway.sc.callback.BlockRequestHandler;
+import com.alibaba.csp.sentinel.adapter.gateway.sc.callback.GatewayCallbackManager;
+import com.alibaba.csp.sentinel.adapter.gateway.sc.exception.SentinelGatewayBlockExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.reactive.result.view.ViewResolver;
+import reactor.core.publisher.Mono;
+import xyz.kip.gateway.util.TraceIdUtil;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
- * Sentinel 限流降级配置（简化）
- * 仅负责初始化 Gateway 的限流规则，避免重复注册 sentinel 过滤器导致启动失败。
+ * Sentinel 限流降级配置
+ * 配置网关限流规则、API 分组、熔断降级处理
+ *
  * @author xiaoshichuan
+ * @version 2026-03-06
  */
 @Configuration
 public class SentinelGatewayConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SentinelGatewayConfig.class);
+
+    private final List<ViewResolver> viewResolvers;
+    private final ServerCodecConfigurer serverCodecConfigurer;
+
+    public SentinelGatewayConfig(ObjectProvider<List<ViewResolver>> viewResolversProvider,
+                                  ServerCodecConfigurer serverCodecConfigurer) {
+        this.viewResolvers = viewResolversProvider.getIfAvailable(Collections::emptyList);
+        this.serverCodecConfigurer = serverCodecConfigurer;
+    }
+
+    /**
+     * 配置 Sentinel 异常处理器
+     */
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public SentinelGatewayBlockExceptionHandler sentinelGatewayBlockExceptionHandler() {
+        return new SentinelGatewayBlockExceptionHandler(viewResolvers, serverCodecConfigurer);
+    }
+
+    /**
+     * 配置 Sentinel 网关过滤器
+     */
+    @Bean
+    @Order(-1)
+    public GlobalFilter sentinelGatewayFilter() {
+        return new SentinelGatewayFilter();
+    }
 
     /**
      * 初始化限流规则
@@ -33,8 +82,71 @@ public class SentinelGatewayConfig {
                 .setIntervalSec(1);
         rules.add(rule1);
 
+        // 规则 2: 基于 API 分组的限流
+        GatewayFlowRule rule2 = new GatewayFlowRule("api-group")
+                .setResourceMode(SentinelGatewayConstants.RESOURCE_MODE_CUSTOM_API_NAME)
+                .setCount(200)
+                .setIntervalSec(1);
+        rules.add(rule2);
+
         GatewayRuleManager.loadRules(rules);
         logger.info("Sentinel gateway flow rules initialized, count: {}", rules.size());
         return rules;
     }
+
+    /**
+     * 初始化 API 分组
+     */
+    @Bean
+    public Set<ApiDefinition> initApiDefinitions() {
+        Set<ApiDefinition> definitions = new HashSet<>();
+
+        // API 分组 1: 认证相关接口
+        ApiDefinition authApi = new ApiDefinition("auth-api")
+                .setPredicateItems(new HashSet<ApiPredicateItem>() {{
+                    add(new ApiPathPredicateItem().setPattern("/api/auth/**")
+                            .setMatchStrategy(SentinelGatewayConstants.URL_MATCH_STRATEGY_PREFIX));
+                }});
+        definitions.add(authApi);
+
+        // API 分组 2: 用户相关接口
+        ApiDefinition userApi = new ApiDefinition("user-api")
+                .setPredicateItems(new HashSet<ApiPredicateItem>() {{
+                    add(new ApiPathPredicateItem().setPattern("/api/user/**")
+                            .setMatchStrategy(SentinelGatewayConstants.URL_MATCH_STRATEGY_PREFIX));
+                }});
+        definitions.add(userApi);
+
+        GatewayApiDefinitionManager.loadApiDefinitions(definitions);
+        logger.info("Sentinel API definitions initialized, count: {}", definitions.size());
+        return definitions;
+    }
+
+    /**
+     * 配置限流/熔断降级的自定义响应
+     */
+    @Bean
+    public BlockRequestHandler blockRequestHandler() {
+        return (exchange, t) -> {
+            Map<String, Object> result = new HashMap<>();
+            result.put("code", 429);
+            result.put("message", "请求被限流或降级");
+            result.put("traceId", TraceIdUtil.getTraceId());
+            result.put("timestamp", System.currentTimeMillis());
+
+            return ServerResponse.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromValue(result));
+        };
+    }
+
+    /**
+     * 注册自定义的 BlockRequestHandler
+     */
+    @Bean
+    public void initBlockRequestHandler() {
+        GatewayCallbackManager.setBlockHandler(blockRequestHandler());
+        logger.info("Sentinel block request handler initialized");
+    }
 }
+

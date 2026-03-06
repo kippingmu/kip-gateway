@@ -34,7 +34,7 @@ Caused by: java.net.SocketException: Operation not permitted
 	at java.base/java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1828)
 	at java.base/java.net.InetAddress$NameServiceAddresses.get(InetAddress.java:1139)
 	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1818)
-	at java.base/java.net.InetAddress.getLocalHost(InetAddress.java:1931)
+	at java.base/java.net.InetAddress.get10.42.0.125(InetAddress.java:1931)
 	at org.springframework.cloud.commons.util.InetUtils.findFirstNonLoopbackAddress(InetUtils.java:117)
 	at org.springframework.cloud.commons.util.InetUtils.findFirstNonLoopbackHostInfo(InetUtils.java:64)
 	at org.springframework.cloud.client.HostInfoEnvironmentPostProcessor.getFirstNonLoopbackHostInfo(HostInfoEnvironmentPostProcessor.java:64)

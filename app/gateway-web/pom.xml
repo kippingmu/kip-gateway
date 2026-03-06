@@ -26,90 +26,69 @@
         项目依赖列表，包含 Spring Boot、Spring Cloud、Alibaba Cloud 以及本地模块的相关依赖。
      -->
     <dependencies>
-        <!-- Spring Boot 核心依赖 -->
-        <!--
-            spring-boot-devtools：开发工具依赖，支持热部署等功能。
-            scope 设置为 runtime 表示仅在运行时生效，optional 设为 true 表示可选依赖。
-         -->
+
+        <!-- Gateway -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-        <!--
-            spring-boot-starter-actuator：监控和管理应用的生产就绪功能。
-         -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
-        <!-- Spring Cloud 相关依赖 -->
-        <!--
-            spring-cloud-starter-bootstrap：支持从配置服务器加载外部配置。
-         -->
+        <!-- Security -->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
-        <!-- Spring Cloud Gateway (non-deprecated) -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
-        </dependency>
-        <!--
-            spring-cloud-starter-openfeign：声明式 HTTP 客户端，简化微服务间的调用。
-         -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-        <!--
-            spring-cloud-starter-loadbalancer：客户端负载均衡器，用于服务发现和负载分配。
-         -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- Alibaba Cloud 相关依赖 -->
-        <!--
-            spring-cloud-starter-alibaba-nacos-discovery：Nacos 服务注册与发现组件。
-         -->
+        <!-- OAuth2 Resource Server -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+
+        <!-- Nacos -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
-        <!--
-            spring-cloud-starter-alibaba-nacos-config：Nacos 配置中心组件，支持动态配置管理。
-         -->
+
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
-        <!--
-            spring-cloud-starter-alibaba-sentinel：Sentinel 流量控制和熔断降级组件。
-         -->
+
+        <!-- Sentinel -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
-        <!--
-            sentinel-datasource-nacos：Sentinel 数据源集成 Nacos，实现规则持久化。
-         -->
-        <dependency>
-            <groupId>com.alibaba.csp</groupId>
-            <artifactId>sentinel-datasource-nacos</artifactId>
-        </dependency>
-        <!--
-            spring-cloud-alibaba-sentinel-gateway：Sentinel 与 Spring Cloud Gateway 集成组件。
-         -->
+
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
         </dependency>
 
+        <!-- Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+        </dependency>
+
+        <!-- Tracing -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
+        </dependency>
+
+        <!-- Actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
         <!-- 本地模块依赖 -->
         <dependency>

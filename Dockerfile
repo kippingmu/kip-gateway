@@ -31,7 +31,7 @@ COPY --from=builder /app/gateway-web/target/app.jar /app/app.jar
 EXPOSE 8888
 
 # If your environment restricts hostname lookup, you can set these at runtime:
-#   -e SPRING_CLOUD_CLIENT_HOSTNAME=localhost -e SPRING_CLOUD_CLIENT_IP_ADDRESS=127.0.0.1
+#   -e SPRING_CLOUD_CLIENT_HOSTNAME=10.42.0.125 -e SPRING_CLOUD_CLIENT_IP_ADDRESS=127.0.0.1
 
 ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app/app.jar"]
 

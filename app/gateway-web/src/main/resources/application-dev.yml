@@ -1,30 +1,37 @@
 # 开发环境配置
+# 只包含 Nacos 连接配置和必要的基础配置
+# 其他配置（Redis、Sentinel、路由等）请在 Nacos 配置中心配置
+
 spring:
+  config:
+    import: "optional:nacos:"  # 可选的 Nacos 配置导入
+
   cloud:
     nacos:
+      # 服务注册与发现配置
       discovery:
         server-addr: 10.42.0.125:8848
         enabled: true
         register-enabled: true
         service: kip-gateway
         group: DEFAULT_GROUP
-        namespace: ""
+        namespace: "public"
+
+      # 配置中心配置
       config:
         server-addr: 10.42.0.125:8848
         enabled: true
+        import-check:
+          enabled: false  # 禁用配置导入检查
         file-extension: yml
         group: DEFAULT_GROUP
-        namespace: ""
-
-    sentinel:
-      enabled: true
-      transport:
-        dashboard: 10.42.0.125:8080
-        port: 8719
+        namespace: "public"
+        refresh-enabled: true  # 启用配置自动刷新
 
 server:
   port: 9527
 
+# 日志配置（本地文件）
 logging:
   level:
     root: INFO
@@ -36,6 +43,6 @@ logging:
   file:
     name: logs/gateway.log
   logback:
-    rolling policy:
+    rollingpolicy:
       max-file-size: 100MB
       max-history: 30

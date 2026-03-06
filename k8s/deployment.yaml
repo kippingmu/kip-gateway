@@ -34,7 +34,7 @@ spec:
               value: "10.42.0.125:8080"
             # Uncomment if cluster environment restricts hostname lookup
             # - name: SPRING_CLOUD_CLIENT_HOSTNAME
-            #   value: "localhost"
+            #   value: "10.42.0.125"
             # - name: SPRING_CLOUD_CLIENT_IP_ADDRESS
             #   value: "127.0.0.1"
           resources:
