@@ -5,22 +5,33 @@
 spring:
   profiles:
     active: dev
-
   application:
     name: kip-gateway
+  config:
+    import:
+      - nacos:${spring.application.name}-${spring.profiles.active}.yml  # 可选的 Nacos 配置导入
 
   cloud:
     nacos:
+      # 服务注册与发现配置
+      discovery:
+        server-addr: 10.42.0.125:8848
+        register-enabled: true
+        group: DEFAULT_GROUP
+        namespace: ""
+
       config:
-        import-check:
-          enabled: false  # 禁用 Nacos 配置导入检查
+        server-addr: 10.42.0.125:8848
+        file-extension: yml
+        group: DEFAULT_GROUP
+        namespace: ""
+        refresh-enabled: true
     gateway:
       server:
         webflux:
           discovery:
             locator:
               enabled: true
-
   jackson:
     default-property-inclusion: non_empty
     date-format: yyyy-MM-dd HH:mm:ss
