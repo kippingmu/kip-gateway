@@ -4,7 +4,11 @@
       "Bash(xargs:*)",
       "mcp__ide__getDiagnostics",
       "Bash(mvn dependency:tree:*)",
-      "Bash(mvn clean:*)"
+      "Bash(mvn clean:*)",
+      "Bash(chmod +x:*)",
+      "Bash(ping:*)",
+      "Bash(nc:*)",
+      "Bash(ssh:*)"
     ]
   }
 }

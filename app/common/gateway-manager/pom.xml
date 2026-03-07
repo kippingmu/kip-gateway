@@ -22,19 +22,7 @@
         <dependency>
             <groupId>xyz.kip</groupId>
             <artifactId>gateway-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!-- 缓存抽象（统一门面） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <!-- Spring Data Redis（默认客户端就是 Lettuce） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
 
     </dependencies>
 

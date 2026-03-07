@@ -7,8 +7,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import reactor.core.publisher.Mono;
 
 /**
  * 链路追踪配置
@@ -41,7 +39,7 @@ public class TracingConfig {
 
                 // 添加路由信息
                 exchange.getAttributes().forEach((key, value) -> {
-                    if (key.toString().contains("route")) {
+                    if (key.contains("route")) {
                         span.tag("gateway." + key, String.valueOf(value));
                     }
                 });

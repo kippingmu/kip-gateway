@@ -7,28 +7,21 @@ import com.alibaba.csp.sentinel.adapter.gateway.common.api.ApiPredicateItem;
 import com.alibaba.csp.sentinel.adapter.gateway.common.api.GatewayApiDefinitionManager;
 import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayFlowRule;
 import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayRuleManager;
-import com.alibaba.csp.sentinel.adapter.gateway.sc.SentinelGatewayFilter;
-import com.alibaba.csp.sentinel.adapter.gateway.sc.callback.BlockRequestHandler;
-import com.alibaba.csp.sentinel.adapter.gateway.sc.callback.GatewayCallbackManager;
 import com.alibaba.csp.sentinel.adapter.gateway.sc.exception.SentinelGatewayBlockExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.reactive.result.view.ViewResolver;
-import reactor.core.publisher.Mono;
-import xyz.kip.gateway.util.TraceIdUtil;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Sentinel 限流降级配置
@@ -60,14 +53,6 @@ public class SentinelGatewayConfig {
         return new SentinelGatewayBlockExceptionHandler(viewResolvers, serverCodecConfigurer);
     }
 
-    /**
-     * 配置 Sentinel 网关过滤器
-     */
-    @Bean
-    @Order(-1)
-    public GlobalFilter sentinelGatewayFilter() {
-        return new SentinelGatewayFilter();
-    }
 
     /**
      * 初始化限流规则
@@ -122,31 +107,5 @@ public class SentinelGatewayConfig {
         return definitions;
     }
 
-    /**
-     * 配置限流/熔断降级的自定义响应
-     */
-    @Bean
-    public BlockRequestHandler blockRequestHandler() {
-        return (exchange, t) -> {
-            Map<String, Object> result = new HashMap<>();
-            result.put("code", 429);
-            result.put("message", "请求被限流或降级");
-            result.put("traceId", TraceIdUtil.getTraceId());
-            result.put("timestamp", System.currentTimeMillis());
-
-            return ServerResponse.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromValue(result));
-        };
-    }
-
-    /**
-     * 注册自定义的 BlockRequestHandler
-     */
-    @Bean
-    public void initBlockRequestHandler() {
-        GatewayCallbackManager.setBlockHandler(blockRequestHandler());
-        logger.info("Sentinel block request handler initialized");
-    }
 }
 

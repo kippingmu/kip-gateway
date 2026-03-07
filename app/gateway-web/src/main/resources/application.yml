@@ -1,12 +1,8 @@
 # 通用配置 - 所有环境共享
 # 环境特定配置请查看 application-dev.yml 和 application-prod.yml
 # 动态配置（路由、规则等）请查看 nacos-todo.yml（需上传到 Nacos 配置中心）
-# 本地开发配置请使用 application-local.yml（不提交到 Git）
 
 spring:
-  config:
-    import: "optional:nacos:"  # 可选的 Nacos 配置导入，避免启动失败
-
   profiles:
     active: dev
 
@@ -19,9 +15,11 @@ spring:
         import-check:
           enabled: false  # 禁用 Nacos 配置导入检查
     gateway:
-      discovery:
-        locator:
-          enabled: true  # 启用服务发现路由
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
 
   jackson:
     default-property-inclusion: non_empty
@@ -41,7 +39,7 @@ management:
     health:
       show-details: always
     gateway:
-      enabled: true
+      access: unrestricted
   prometheus:
     metrics:
       export:
