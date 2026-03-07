@@ -38,14 +38,17 @@ public class RequestCacheFilter implements GlobalFilter, Ordered {
     private static final String CACHE_KEY_PREFIX = "gateway:cache:";
     private static final String CACHE_HIT_HEADER = "X-Cache-Hit";
 
+    /**
+     * the @Value get from nacos config:
+     */
     @Value("${gateway.cache.enabled:false}")
     private boolean enabled;
 
     @Value("${gateway.cache.ttl:300}")
-    private long cacheTtl; // 缓存过期时间（秒）
+    private long cacheTtl;
 
     @Value("${gateway.cache.paths:}")
-    private String cachePaths; // 需要缓存的路径，逗号分隔
+    private String cachePaths;
 
     private final ReactiveRedisTemplate<String, String> redisTemplate;
 
@@ -66,11 +69,7 @@ public class RequestCacheFilter implements GlobalFilter, Ordered {
                 .flatMap(cachedResponse -> {
                     logger.debug("traceId={}, Cache hit for key: {}", TraceIdUtil.getTraceId(), cacheKey);
                     return writeCachedResponse(exchange, cachedResponse);
-                })
-                .switchIfEmpty(Mono.defer(() -> {
-                    logger.debug("traceId={}, Cache miss for key: {}", TraceIdUtil.getTraceId(), cacheKey);
-                    return cacheResponse(exchange, chain, cacheKey);
-                }));
+                });
     }
 
     /**
@@ -89,14 +88,7 @@ public class RequestCacheFilter implements GlobalFilter, Ordered {
         if (cachePathSet.isEmpty()) {
             return false;
         }
-
-        for (String cachePath : cachePathSet) {
-            if (path.startsWith(cachePath)) {
-                return true;
-            }
-        }
-
-        return false;
+        return cachePathSet.contains(path);
     }
 
     /**
@@ -131,7 +123,7 @@ public class RequestCacheFilter implements GlobalFilter, Ordered {
         return chain.filter(exchange.mutate().response(decoratedResponse).build())
                 .then(Mono.defer(() -> {
                     String responseBody = decoratedResponse.getResponseBody();
-                    if (responseBody != null && !responseBody.isEmpty()) {
+                    if (!responseBody.isEmpty()) {
                         return redisTemplate.opsForValue()
                                 .set(cacheKey, responseBody, Duration.ofSeconds(cacheTtl))
                                 .doOnSuccess(v -> logger.debug("traceId={}, Cached response for key: {}",
@@ -152,9 +144,12 @@ public class RequestCacheFilter implements GlobalFilter, Ordered {
         return new HashSet<>(Arrays.asList(cachePaths.split(",")));
     }
 
+    /**
+     * 设置过滤器优先级（越小越先执行）
+     */
     @Override
     public int getOrder() {
-        return -80; // 在认证之后，业务处理之前
+        return -80;
     }
 
     /**
@@ -172,8 +167,7 @@ public class RequestCacheFilter implements GlobalFilter, Ordered {
 
         @Override
         public Mono<Void> writeWith(org.reactivestreams.Publisher<? extends DataBuffer> body) {
-            if (body instanceof Flux) {
-                Flux<? extends DataBuffer> fluxBody = (Flux<? extends DataBuffer>) body;
+            if (body instanceof Flux<? extends DataBuffer> fluxBody) {
                 return super.writeWith(fluxBody.map(dataBuffer -> {
                     byte[] content = new byte[dataBuffer.readableByteCount()];
                     dataBuffer.read(content);

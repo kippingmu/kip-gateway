@@ -16,8 +16,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>app/gateway-web</module>
-        <module>app/common/gateway-common</module>
-        <module>app/common/gateway-manager</module>
     </modules>
 
     <properties>
@@ -50,17 +48,6 @@
             </dependency>
 
             <!-- 本地依赖管理 -->
-            <dependency>
-                <groupId>xyz.kip</groupId>
-                <artifactId>gateway-common</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
-            <!-- 本地模块依赖 -->
-            <dependency>
-                <groupId>xyz.kip</groupId>
-                <artifactId>gateway-manager</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>

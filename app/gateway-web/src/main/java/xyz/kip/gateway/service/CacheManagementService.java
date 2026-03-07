@@ -69,21 +69,23 @@ public class CacheManagementService {
                 .map(count -> new CacheStats(count, CACHE_KEY_PREFIX));
     }
 
-    public static class CacheStats {
-        private final long totalKeys;
-        private final String prefix;
-
-        public CacheStats(long totalKeys, String prefix) {
-            this.totalKeys = totalKeys;
-            this.prefix = prefix;
-        }
-
-        public long getTotalKeys() {
-            return totalKeys;
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
+    /**
+     * 缓存统计信息记录类（Record）
+     * <p>
+     * Record 是 Java 14+ 引入的不可变数据载体类型，用于简洁地表示纯数据对象。
+     * 编译器会自动生成构造函数、访问器方法（getter）、equals()、hashCode() 和 toString() 方法。
+     * </p>
+     * <p>
+     * 特性：
+     * - 所有字段都是 final 的，保证不可变性和线程安全
+     * - 提供便捷的访问器方法：{@code totalKeys()} 和 {@code prefix()}
+     * - 自动实现基于字段的 equals() 和 hashCode()
+     * - 自动生成格式化的 toString() 输出
+     * </p>
+     *
+     * @param totalKeys 缓存键总数
+     * @param prefix 缓存键前缀
+     */
+    public record CacheStats(long totalKeys, String prefix) {
     }
 }

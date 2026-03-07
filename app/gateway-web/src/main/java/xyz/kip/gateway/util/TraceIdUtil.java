@@ -12,7 +12,6 @@ import java.util.UUID;
 public class TraceIdUtil {
 
     public static final String TRACE_ID_HEADER = "X-Trace-Id";
-    public static final String TRACE_ID_KEY = "traceId";
 
     private static final ThreadLocal<String> TRACE_ID_HOLDER = new ThreadLocal<>();
 

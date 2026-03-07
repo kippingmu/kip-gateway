@@ -4,6 +4,7 @@ target
 .idea
 *.iml
 logs
+docs
 **/.DS_Store
 **/node_modules
 **/.vscode
