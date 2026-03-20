@@ -9,6 +9,8 @@ COPY deps/kip-open-common-1.0-SNAPSHOT.jar /tmp/deps/kip-open-common-1.0-SNAPSHO
 COPY deps/kip-open-common-1.0-SNAPSHOT.pom /tmp/deps/kip-open-common-1.0-SNAPSHOT.pom
 
 RUN --mount=type=cache,target=/root/.m2 \
+    rm -f /root/.m2/repository/xyz/kip/kip-open-common/maven-metadata-local.xml && \
+    rm -rf /root/.m2/repository/xyz/kip/kip-open-common/1.0-SNAPSHOT && \
     mvn -B -ntp install:install-file \
     -Dfile=/tmp/deps/kip-open-common-1.0-SNAPSHOT.jar \
     -DpomFile=/tmp/deps/kip-open-common-1.0-SNAPSHOT.pom
