@@ -24,4 +24,5 @@ WORKDIR /app
 COPY --from=builder /build/app/gateway-web/target/app.jar /app/app.jar
 
 EXPOSE 9527
+EXPOSE 8719
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

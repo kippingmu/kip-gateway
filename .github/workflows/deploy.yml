@@ -78,6 +78,8 @@ jobs:
           docker build --progress=plain -t "${IMAGE_REPO}:${IMAGE_TAG}" -t "${IMAGE_REPO}:latest" .
 
       - name: Push image
+        id: push_image
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -104,7 +106,14 @@ jobs:
 
           cd "${DEPLOY_PATH}"
           export IMAGE_TAG
-          docker compose pull
+
+          if [ "${{ steps.push_image.outcome }}" = "success" ]; then
+            docker compose pull
+          else
+            echo "Registry push failed; deploying the freshly built local image on the runner host"
+            docker image inspect "${FULL_IMAGE}" >/dev/null
+          fi
+
           docker compose up -d
 
       - name: Health check

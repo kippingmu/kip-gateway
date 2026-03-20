@@ -3,6 +3,7 @@ package xyz.kip.gateway.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
@@ -17,12 +18,11 @@ import org.springframework.beans.factory.annotation.Value;
  * @author xiaoshichuan
  * @version 2026-03-06
  */
+@RefreshScope
 @Configuration
 @EnableWebFluxSecurity
 public class OAuth2SecurityConfig {
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri:}")
-    private String issuerUri;
 
     @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri:}")
     private String jwkSetUri;
