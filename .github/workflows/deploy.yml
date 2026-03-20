@@ -124,7 +124,7 @@ jobs:
           printf "%s" "${IMAGE_TAG}" > "${DEPLOY_PATH}/.deploy-state/current_image_tag"
 
       - name: Rollback on failure
-        if: failure() && env.PREV_TAG != ""
+        if: failure() && env.PREV_TAG != ''
         shell: bash
         run: |
           set -euo pipefail
