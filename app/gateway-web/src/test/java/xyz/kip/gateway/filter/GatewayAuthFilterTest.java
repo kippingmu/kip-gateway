@@ -27,13 +27,32 @@ import static org.mockito.Mockito.when;
 class GatewayAuthFilterTest {
 
     @Test
-    void shouldSkipAuthenticationForWhitelistedPath() {
+    void shouldSkipAuthenticationForConfiguredWhitelistedPath() {
         JwtUtil jwtUtil = mock(JwtUtil.class);
         ReactiveStringRedisTemplate redis = mock(ReactiveStringRedisTemplate.class);
         GatewayAuthFilter filter = new GatewayAuthFilter(jwtUtil, redis, new ObjectMapper(), "/api/auth/**");
 
         AtomicReference<ServerWebExchange> captured = new AtomicReference<>();
         MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.post("/api/auth/login"));
+        GatewayFilterChain chain = value -> {
+            captured.set(value);
+            return Mono.empty();
+        };
+
+        filter.filter(exchange, chain).block();
+
+        assertNotNull(captured.get());
+        verifyNoInteractions(jwtUtil, redis);
+    }
+
+    @Test
+    void shouldSkipAuthenticationForDiscoveryAuthPath() {
+        JwtUtil jwtUtil = mock(JwtUtil.class);
+        ReactiveStringRedisTemplate redis = mock(ReactiveStringRedisTemplate.class);
+        GatewayAuthFilter filter = new GatewayAuthFilter(jwtUtil, redis, new ObjectMapper(), "/api/auth/**");
+
+        AtomicReference<ServerWebExchange> captured = new AtomicReference<>();
+        MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.post("/kip-auth/api/auth/login"));
         GatewayFilterChain chain = value -> {
             captured.set(value);
             return Mono.empty();
@@ -78,7 +97,7 @@ class GatewayAuthFilterTest {
         GatewayAuthFilter filter = new GatewayAuthFilter(jwtUtil, redis, new ObjectMapper(), "/api/auth/**");
         AtomicReference<ServerWebExchange> captured = new AtomicReference<>();
         MockServerWebExchange exchange = MockServerWebExchange.from(
-                MockServerHttpRequest.get("/api/app/demo/context")
+                MockServerHttpRequest.get("/kip-app/api/app/demo/context")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer jwt-token")
         );
         GatewayFilterChain chain = value -> {
@@ -116,7 +135,7 @@ class GatewayAuthFilterTest {
 
         GatewayAuthFilter filter = new GatewayAuthFilter(jwtUtil, redis, new ObjectMapper(), "/api/auth/**");
         MockServerWebExchange exchange = MockServerWebExchange.from(
-                MockServerHttpRequest.get("/api/app/demo/context")
+                MockServerHttpRequest.get("/kip-app/api/app/demo/context")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer jwt-token")
         );
 

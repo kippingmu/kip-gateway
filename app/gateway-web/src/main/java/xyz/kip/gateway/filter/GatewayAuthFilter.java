@@ -47,6 +47,11 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     private static final String HDR_TENANT_ID = "X-Tenant-Id";
     private static final String HDR_USER_EMAIL = "X-User-Email";
     private static final String HDR_USER_PHONE = "X-User-Phone";
+    private static final List<String> BUILTIN_WHITELIST_PREFIXES = List.of(
+            "/kip-auth/api/auth/",
+            "/kip-auth/actuator/"
+    );
+
 
     private final JwtUtil jwtUtil;
     private final ReactiveStringRedisTemplate redis;
@@ -133,6 +138,11 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     private boolean isWhitelisted(String path) {
         if (path == null) {
             return false;
+        }
+        for (String prefix : BUILTIN_WHITELIST_PREFIXES) {
+            if (path.startsWith(prefix)) {
+                return true;
+            }
         }
         for (String p : whitelistPaths) {
             if (p.equals("/*")) {
