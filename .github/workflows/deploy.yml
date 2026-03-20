@@ -1,0 +1,139 @@
+name: build-push-deploy
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Optional image tag to deploy (default: current commit sha12)"
+        required: false
+        type: string
+
+concurrency:
+  group: prod-deploy-kip-gateway
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, prod]
+    environment: prod
+    permissions:
+      contents: read
+    env:
+      DOCKER_BUILDKIT: "1"
+      BUILDKIT_PROGRESS: plain
+      IMAGE_REPO: registry.cn-hangzhou.aliyuncs.com/kip-app/kip-gateway
+      DEPLOY_PATH: /home/xiaoshichuan/apps/kip-gateway
+      HEALTHCHECK_URL: http://127.0.0.1:9527/actuator/health
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve image variables
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMAGE_TAG_INPUT="${{ github.event.inputs.image_tag }}"
+          if [ -n "${IMAGE_TAG_INPUT}" ]; then
+            IMAGE_TAG="${IMAGE_TAG_INPUT}"
+          else
+            IMAGE_TAG="${GITHUB_SHA::12}"
+          fi
+
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
+          echo "FULL_IMAGE=${IMAGE_REPO}:${IMAGE_TAG}" >> "$GITHUB_ENV"
+
+      - name: Docker login to ACR
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "${{ secrets.ALIYUN_REGISTRY_PASSWORD }}" | docker login registry.cn-hangzhou.aliyuncs.com -u "${{ secrets.ALIYUN_REGISTRY_USERNAME }}" --password-stdin
+
+      - name: Prepare kip-open-common for docker build
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEP_DIR="$HOME/.m2/repository/xyz/kip/kip-open-common/1.0-SNAPSHOT"
+          test -f "$DEP_DIR/kip-open-common-1.0-SNAPSHOT.jar"
+          test -f "$DEP_DIR/kip-open-common-1.0-SNAPSHOT.pom"
+
+          mkdir -p deps
+          cp "$DEP_DIR/kip-open-common-1.0-SNAPSHOT.jar" deps/
+          cp "$DEP_DIR/kip-open-common-1.0-SNAPSHOT.pom" deps/
+          ls -lh deps/
+
+      - name: Build image
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker build --progress=plain -t "${IMAGE_REPO}:${IMAGE_TAG}" -t "${IMAGE_REPO}:latest" .
+
+      - name: Push image
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker push "${IMAGE_REPO}:${IMAGE_TAG}"
+          docker push "${IMAGE_REPO}:latest"
+
+      - name: Deploy with docker compose
+        shell: bash
+        run: |
+          set -euo pipefail
+          STATE_DIR="${DEPLOY_PATH}/.deploy-state"
+          CURRENT_FILE="${STATE_DIR}/current_image_tag"
+
+          test -d "${DEPLOY_PATH}"
+          test -f "${DEPLOY_PATH}/docker-compose.yml"
+
+          mkdir -p "${STATE_DIR}"
+          PREV_TAG=""
+          if [ -f "${CURRENT_FILE}" ]; then
+            PREV_TAG="$(cat "${CURRENT_FILE}")"
+          fi
+
+          echo "PREV_TAG=${PREV_TAG}" >> "$GITHUB_ENV"
+
+          cd "${DEPLOY_PATH}"
+          export IMAGE_TAG
+          docker compose pull
+          docker compose up -d
+
+      - name: Health check
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 20); do
+            if curl -fsS "${HEALTHCHECK_URL}" >/dev/null; then
+              echo "Health check passed"
+              exit 0
+            fi
+            sleep 5
+          done
+
+          echo "Health check failed"
+          exit 1
+
+      - name: Persist deployed tag
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${DEPLOY_PATH}/.deploy-state"
+          printf "%s" "${IMAGE_TAG}" > "${DEPLOY_PATH}/.deploy-state/current_image_tag"
+
+      - name: Rollback on failure
+        if: failure() && env.PREV_TAG != ""
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${DEPLOY_PATH}"
+          export IMAGE_TAG="${PREV_TAG}"
+          docker compose pull
+          docker compose up -d
+
+      - name: Docker logout
+        if: always()
+        shell: bash
+        run: docker logout registry.cn-hangzhou.aliyuncs.com || true
