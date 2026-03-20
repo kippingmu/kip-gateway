@@ -49,7 +49,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "${{ secrets.ALIYUN_REGISTRY_PASSWORD }}" | docker login registry.cn-hangzhou.aliyuncs.com -u "${{ secrets.ALIYUN_REGISTRY_USERNAME }}" --password-stdin
+          REGISTRY_USERNAME="${{ secrets.ALIYUN_REGISTRY_USERNAME }}"
+          REGISTRY_PASSWORD="${{ secrets.ALIYUN_REGISTRY_PASSWORD }}"
+
+          if [ -n "${REGISTRY_USERNAME}" ] && [ -n "${REGISTRY_PASSWORD}" ]; then
+            echo "${REGISTRY_PASSWORD}" | docker login registry.cn-hangzhou.aliyuncs.com -u "${REGISTRY_USERNAME}" --password-stdin
+          else
+            echo "Registry secrets not configured; reusing existing docker login on runner host"
+          fi
 
       - name: Prepare kip-open-common for docker build
         shell: bash
@@ -136,4 +143,13 @@ jobs:
       - name: Docker logout
         if: always()
         shell: bash
-        run: docker logout registry.cn-hangzhou.aliyuncs.com || true
+        run: |
+          set -euo pipefail
+          REGISTRY_USERNAME="${{ secrets.ALIYUN_REGISTRY_USERNAME }}"
+          REGISTRY_PASSWORD="${{ secrets.ALIYUN_REGISTRY_PASSWORD }}"
+
+          if [ -n "${REGISTRY_USERNAME}" ] && [ -n "${REGISTRY_PASSWORD}" ]; then
+            docker logout registry.cn-hangzhou.aliyuncs.com || true
+          else
+            echo "Skipping docker logout because workflow reused runner host login"
+          fi
