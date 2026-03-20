@@ -96,33 +96,23 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
-    <!--
-        构建配置部分，定义了最终生成的 JAR 文件名称和使用的 Maven 插件。
-     -->
     <build>
-        <!--
-            最终生成的 JAR 文件名为 app.jar。
-         -->
         <finalName>app</finalName>
-        <!--
-            插件列表，用于扩展 Maven 的构建能力。
-         -->
         <plugins>
-            <!--
-                spring-boot-maven-plugin：Spring Boot 官方插件，支持打包可执行 JAR 和运行应用。
-             -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!-- 指定应用程序入口类 -->
                     <mainClass>xyz.kip.GatewayBootApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-
 </project>
