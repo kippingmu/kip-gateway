@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -21,6 +22,7 @@ import java.util.Map;
  * @author xiaoshichuan
  * @version 2026-02-28
  */
+@RefreshScope
 @Component
 public class JwtUtil {
 

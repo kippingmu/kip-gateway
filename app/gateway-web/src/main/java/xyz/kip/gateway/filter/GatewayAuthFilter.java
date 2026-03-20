@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import xyz.kip.gateway.util.JwtUtil;
@@ -37,6 +38,7 @@ import java.util.List;
  * (via @ConditionalOnClass). Place into your Gateway application to use.
  * @author xiaoshichuan
  */
+@RefreshScope
 @Component
 @ConditionalOnClass(GlobalFilter.class)
 public class GatewayAuthFilter implements GlobalFilter, Ordered {

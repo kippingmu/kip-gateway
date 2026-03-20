@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,6 +31,7 @@ import java.util.Set;
  * @author xiaoshichuan
  * @version 2026-03-06
  */
+@RefreshScope
 @Component
 public class RequestCacheFilter implements GlobalFilter, Ordered {
 
