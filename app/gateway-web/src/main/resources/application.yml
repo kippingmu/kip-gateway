@@ -1,6 +1,5 @@
 # 通用配置 - 所有环境共享
 # 环境特定配置请查看 application-dev.yml 和 application-prod.yml
-# 动态配置（路由、规则等）请查看 nacos-todo.yml（需上传到 Nacos 配置中心）
 
 spring:
   profiles:
@@ -9,7 +8,7 @@ spring:
     name: kip-gateway
   config:
     import:
-      - nacos:${spring.application.name}-${spring.profiles.active}.yml  # 可选的 Nacos 配置导入
+      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yml  # 可选的 Nacos 配置导入
 
   cloud:
     nacos:
@@ -19,19 +18,32 @@ spring:
         register-enabled: true
         group: DEFAULT_GROUP
         namespace: ""
-
       config:
         server-addr: 10.42.0.125:8848
         file-extension: yml
         group: DEFAULT_GROUP
         namespace: ""
         refresh-enabled: true
+
     gateway:
       server:
         webflux:
           discovery:
             locator:
               enabled: true
+              lower-case-service-id: true
+          routes:
+            # 本地默认路由兜底，和 Nacos 当前注册的 kip-app 服务保持一致。
+            - id: kip-app-service
+              uri: lb://kip-app
+              predicates:
+                - Path=/api/app/**
+              filters:
+                - name: StripPrefix
+                  args:
+                    parts: 2
+              order: 1
+
   jackson:
     default-property-inclusion: non_empty
     date-format: yyyy-MM-dd HH:mm:ss

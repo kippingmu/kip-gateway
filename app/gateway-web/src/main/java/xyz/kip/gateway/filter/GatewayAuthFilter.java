@@ -70,7 +70,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     public GatewayAuthFilter(
             JwtUtil jwtUtil,
             ReactiveStringRedisTemplate redis,
-            @Value("${gateway.auth.whitelist:/api/auth/login,/api/auth/register,/api/auth/health}") String whitelistCsv
+            @Value("${gateway.auth.whitelist:/actuator/**,/gateway/**,/api/public/**,/api/auth/**}") String whitelistCsv
     ) {
         this.jwtUtil = jwtUtil;
         this.redis = redis;
