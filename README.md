@@ -312,3 +312,11 @@ kip-gateway/
 ## 📞 联系方式
 
 如有问题，请查看文档或提交 Issue。
+
+## Git Remote Policy
+
+Use SSH for the Git remote. Do not use HTTPS remotes in this repository.
+
+Correct remote:
+
+git remote set-url origin git@github.com:kippingmu/kip-gateway.git
