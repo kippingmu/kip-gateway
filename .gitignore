@@ -37,6 +37,9 @@ build/
 ### Mac OS ###
 .DS_Store
 
+### Logs ###
+/logs/
+
 ### Local Configuration ###
 **/application-local.yml
 **/application-local.yaml
