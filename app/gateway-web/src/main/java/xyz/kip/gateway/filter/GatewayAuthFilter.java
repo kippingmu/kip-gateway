@@ -48,10 +48,11 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     private static final String HDR_USER_EMAIL = "X-User-Email";
     private static final String HDR_USER_PHONE = "X-User-Phone";
     private static final List<String> BUILTIN_WHITELIST_PREFIXES = List.of(
-            "/kip-auth/api/auth/",
+            "/kip-auth/api/auth/login",
+            "/kip-auth/api/auth/register",
+            "/kip-auth/api/auth/health",
             "/kip-auth/actuator/"
     );
-
 
     private final JwtUtil jwtUtil;
     private final ReactiveStringRedisTemplate redis;
@@ -62,7 +63,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
             JwtUtil jwtUtil,
             ReactiveStringRedisTemplate redis,
             ObjectMapper objectMapper,
-            @Value("${gateway.auth.whitelist:/actuator/**,/gateway/**,/api/public/**,/api/auth/**}") String whitelistCsv
+            @Value("${gateway.auth.whitelist:/actuator/**,/gateway/**,/api/public/**,/api/auth/login,/api/auth/register,/api/auth/health}") String whitelistCsv
     ) {
         this.jwtUtil = jwtUtil;
         this.redis = redis;
@@ -112,7 +113,8 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         String userInfoKey = RedisKeyUtil.userInfoKey(userId);
         return redis.opsForValue().get(tokenKey)
                 .flatMap(cachedToken -> {
-                    if (!StringUtils.hasText(cachedToken) || !cachedToken.equals(token)) {
+                    String normalizedToken = normalizeCachedToken(cachedToken);
+                    if (!StringUtils.hasText(normalizedToken) || !normalizedToken.equals(token)) {
                         return unauthorized(exchange, "Token revoked or not latest");
                     }
                     return redis.opsForValue().get(userInfoKey)
@@ -181,6 +183,17 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         }
         Object value = claims.get("tenantId");
         return value != null ? String.valueOf(value) : null;
+    }
+
+    private String normalizeCachedToken(String cachedToken) {
+        if (!StringUtils.hasText(cachedToken)) {
+            return cachedToken;
+        }
+        String normalized = cachedToken.trim();
+        if (normalized.length() >= 2 && normalized.startsWith("\"") && normalized.endsWith("\"")) {
+            normalized = normalized.substring(1, normalized.length() - 1);
+        }
+        return normalized;
     }
 
     private UserContext parseUserContext(String cachedUserJson, String fallbackUserId, String fallbackUsername, String fallbackTenantId) {
