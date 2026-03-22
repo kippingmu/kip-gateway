@@ -3,11 +3,6 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
     <servers>
         <server>
-            <id>aliyun-private-releases</id>
-            <username>${env.ALIYUN_MAVEN_USERNAME}</username>
-            <password>${env.ALIYUN_MAVEN_PASSWORD}</password>
-        </server>
-        <server>
             <id>aliyun-private-snapshots</id>
             <username>${env.ALIYUN_MAVEN_USERNAME}</username>
             <password>${env.ALIYUN_MAVEN_PASSWORD}</password>

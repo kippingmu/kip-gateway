@@ -30,10 +30,6 @@
     </properties>
 
     <distributionManagement>
-        <repository>
-            <id>aliyun-private-releases</id>
-            <url>https://packages.aliyun.com/69c03f31ad0a337b92d8f85e/maven/2650125-release-obk1fp</url>
-        </repository>
         <snapshotRepository>
             <id>aliyun-private-snapshots</id>
             <url>https://packages.aliyun.com/69c03f31ad0a337b92d8f85e/maven/2650125-snapshot-rdnfly</url>
@@ -45,17 +41,6 @@
             <id>central</id>
             <name>Maven Central</name>
             <url>https://repo1.maven.org/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>aliyun-private-releases</id>
-            <name>Aliyun Private Releases</name>
-            <url>https://packages.aliyun.com/69c03f31ad0a337b92d8f85e/maven/2650125-release-obk1fp</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
