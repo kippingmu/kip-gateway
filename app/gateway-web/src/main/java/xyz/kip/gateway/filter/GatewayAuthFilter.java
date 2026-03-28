@@ -58,17 +58,23 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     private final ReactiveStringRedisTemplate redis;
     private final ObjectMapper objectMapper;
     private final List<String> whitelistPaths;
+    private final List<String> userWhitelist;
 
     public GatewayAuthFilter(
             JwtUtil jwtUtil,
             ReactiveStringRedisTemplate redis,
             ObjectMapper objectMapper,
-            @Value("${gateway.auth.whitelist:/actuator/**,/gateway/**,/api/public/**,/api/auth/login,/api/auth/register,/api/auth/health}") String whitelistCsv
+            @Value("${gateway.auth.whitelist:/actuator/**,/gateway/**,/api/public/**,/api/auth/login,/api/auth/register,/api/auth/health}") String whitelistCsv,
+            @Value("${gateway.auth.user-whitelist:}") String userWhitelistCsv
     ) {
         this.jwtUtil = jwtUtil;
         this.redis = redis;
         this.objectMapper = objectMapper;
         this.whitelistPaths = Arrays.stream(whitelistCsv.split(","))
+                .map(String::trim)
+                .filter(StringUtils::hasText)
+                .toList();
+        this.userWhitelist = Arrays.stream(userWhitelistCsv.split(","))
                 .map(String::trim)
                 .filter(StringUtils::hasText)
                 .toList();
@@ -108,9 +114,27 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
             logger.warn("traceId={}, Token missing userId", TraceIdUtil.getTraceId());
             return unauthorized(exchange, "Token missing userId");
         }
+        String userInfoKey = RedisKeyUtil.userInfoKey(userId);
+        if (isUserWhitelisted(username)) {
+            return redis.opsForValue().get(userInfoKey)
+                    .flatMap(cachedUserJson -> {
+                        UserContext context = parseUserContext(cachedUserJson, userId, username, tenantId);
+                        if (context == null) {
+                            return unauthorized(exchange, "User session not found");
+                        }
+                        ServerHttpRequest mutated = exchange.getRequest().mutate()
+                                .header(HDR_USER_ID, safe(context.userId()))
+                                .header(HDR_USERNAME, safe(context.username()))
+                                .header(HDR_TENANT_ID, safe(context.tenantId()))
+                                .header(HDR_USER_EMAIL, safe(context.email()))
+                                .header(HDR_USER_PHONE, safe(context.phone()))
+                                .build();
+                        return chain.filter(exchange.mutate().request(mutated).build());
+                    })
+                    .switchIfEmpty(unauthorized(exchange, "User session not found"));
+        }
 
         String tokenKey = RedisKeyUtil.userTokenKey(userId);
-        String userInfoKey = RedisKeyUtil.userInfoKey(userId);
         return redis.opsForValue().get(tokenKey)
                 .flatMap(cachedToken -> {
                     String normalizedToken = normalizeCachedToken(cachedToken);
@@ -135,6 +159,10 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
                             .switchIfEmpty(unauthorized(exchange, "User session not found"));
                 })
                 .switchIfEmpty(unauthorized(exchange, "Token revoked or not latest"));
+    }
+
+    private boolean isUserWhitelisted(String username) {
+        return StringUtils.hasText(username) && userWhitelist.contains(username);
     }
 
     private boolean isWhitelisted(String path) {
