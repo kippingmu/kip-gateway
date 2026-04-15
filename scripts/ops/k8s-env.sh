@@ -12,7 +12,7 @@ export IMAGE_REPO="${IMAGE_REPO:-registry.cn-hangzhou.aliyuncs.com/kip-app/kip-g
 export IMAGE_TAG="${IMAGE_TAG:-$(git -C "${ROOT}" rev-parse --short=12 HEAD)}"
 export FULL_IMAGE="${FULL_IMAGE:-${IMAGE_REPO}:${IMAGE_TAG}}"
 
-export ROLLOUT_TIMEOUT="${ROLLOUT_TIMEOUT:-180s}"
+export ROLLOUT_TIMEOUT="${ROLLOUT_TIMEOUT:-300s}"
 export SMOKE_PORT="${SMOKE_PORT:-19527}"
 export SMOKE_HEALTH_PATH="${SMOKE_HEALTH_PATH:-/actuator/health}"
 export SMOKE_ROUTES_PATH="${SMOKE_ROUTES_PATH:-/actuator/gateway/routes}"
