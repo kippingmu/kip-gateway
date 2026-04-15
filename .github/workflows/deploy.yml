@@ -81,15 +81,22 @@ jobs:
           fi
 
       - name: Ensure K8s image pull secret
-        if: ${{ secrets.ALIYUN_REGISTRY_USERNAME != '' && secrets.ALIYUN_REGISTRY_PASSWORD != '' }}
         shell: bash
         run: |
           set -euo pipefail
+          REGISTRY_USERNAME="${{ secrets.ALIYUN_REGISTRY_USERNAME }}"
+          REGISTRY_PASSWORD="${{ secrets.ALIYUN_REGISTRY_PASSWORD }}"
+
+          if [ -z "${REGISTRY_USERNAME}" ] || [ -z "${REGISTRY_PASSWORD}" ]; then
+            echo "Registry secrets not configured; reusing existing image pull secret in ${K8S_NAMESPACE}"
+            exit 0
+          fi
+
           kubectl get namespace "${K8S_NAMESPACE}" >/dev/null 2>&1 || kubectl create namespace "${K8S_NAMESPACE}"
           kubectl -n "${K8S_NAMESPACE}" create secret docker-registry "${IMAGE_PULL_SECRET_NAME}" \
             --docker-server="registry.cn-hangzhou.aliyuncs.com" \
-            --docker-username="${{ secrets.ALIYUN_REGISTRY_USERNAME }}" \
-            --docker-password="${{ secrets.ALIYUN_REGISTRY_PASSWORD }}" \
+            --docker-username="${REGISTRY_USERNAME}" \
+            --docker-password="${REGISTRY_PASSWORD}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Prepare kip-open-common for docker build
