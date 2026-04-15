@@ -33,6 +33,7 @@ jobs:
       BUILDKIT_PROGRESS: plain
       IMAGE_REPO: registry.cn-hangzhou.aliyuncs.com/kip-app/kip-gateway
       K8S_NAMESPACE: kip-poc
+      IMAGE_PULL_SECRET_NAME: kip-acr-pull
       K8S_DEPLOYMENT: kip-gateway
       K8S_SERVICE: kip-gateway
       K8S_MANIFEST_DIR: ./deploy/k8s
@@ -78,6 +79,18 @@ jobs:
           else
             echo "Registry secrets not configured; reusing existing docker login on runner host"
           fi
+
+      - name: Ensure K8s image pull secret
+        if: ${{ secrets.ALIYUN_REGISTRY_USERNAME != '' && secrets.ALIYUN_REGISTRY_PASSWORD != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          kubectl get namespace "${K8S_NAMESPACE}" >/dev/null 2>&1 || kubectl create namespace "${K8S_NAMESPACE}"
+          kubectl -n "${K8S_NAMESPACE}" create secret docker-registry "${IMAGE_PULL_SECRET_NAME}" \
+            --docker-server="registry.cn-hangzhou.aliyuncs.com" \
+            --docker-username="${{ secrets.ALIYUN_REGISTRY_USERNAME }}" \
+            --docker-password="${{ secrets.ALIYUN_REGISTRY_PASSWORD }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Prepare kip-open-common for docker build
         shell: bash

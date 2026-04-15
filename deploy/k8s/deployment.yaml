@@ -14,6 +14,8 @@ spec:
       labels:
         app: kip-gateway
     spec:
+      imagePullSecrets:
+        - name: kip-acr-pull
       containers:
         - name: kip-gateway
           image: ${IMAGE_REPO}:${IMAGE_TAG}
