@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: kip-gateway
-          image: kip-gateway:k8s-poc-local
-          imagePullPolicy: Never
+          image: ${IMAGE_REPO}:${IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 9527
@@ -60,6 +60,4 @@ spec:
             preStop:
               exec:
                 command: ["/bin/sh", "-c", "sleep 10"]
-      nodeSelector:
-        kubernetes.io/hostname: ubuntu
       terminationGracePeriodSeconds: 45

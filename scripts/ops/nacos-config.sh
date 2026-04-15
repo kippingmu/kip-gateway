@@ -11,6 +11,7 @@ usage() {
   echo "Usage: $0 get [dataId]"
   echo "       $0 put [dataId] <file>"
   echo "       $0 put [dataId] --stdin"
+  echo "       $0 verify [dataId] <file>"
 }
 
 token() {
@@ -49,6 +50,27 @@ case "$ACTION" in
       --data-urlencode "content@${INPUT}"
     if [ -n "$TMP" ]; then
       rm -f "$TMP"
+    fi
+    ;;
+  verify)
+    INPUT="${3:-}"
+    if [ -z "$INPUT" ] || [ ! -f "$INPUT" ]; then
+      echo "verify requires a local file path" >&2
+      exit 1
+    fi
+    TMP_REMOTE="$(mktemp)"
+    trap 'rm -f "$TMP_REMOTE"' EXIT
+    curl -fsS -G "http://${NACOS_ADDR}/nacos/v1/cs/configs" \
+      --data-urlencode "accessToken=${ACCESS_TOKEN}" \
+      --data-urlencode "tenant=${TENANT}" \
+      --data-urlencode "group=${GROUP}" \
+      --data-urlencode "dataId=${DATA_ID}" > "$TMP_REMOTE"
+    if cmp -s "$TMP_REMOTE" "$INPUT"; then
+      echo "Nacos config verified: ${DATA_ID}"
+    else
+      echo "Nacos config mismatch: ${DATA_ID}" >&2
+      diff -u "$TMP_REMOTE" "$INPUT" || true
+      exit 1
     fi
     ;;
   *)

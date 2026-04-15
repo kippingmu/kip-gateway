@@ -9,6 +9,14 @@ on:
         description: "Optional image tag to deploy (default: current commit sha12)"
         required: false
         type: string
+      nacos_action:
+        description: "Nacos config action for the deploy run"
+        required: false
+        type: choice
+        default: verify
+        options:
+          - verify
+          - publish
 
 concurrency:
   group: prod-deploy-kip-gateway
@@ -24,18 +32,21 @@ jobs:
       DOCKER_BUILDKIT: "1"
       BUILDKIT_PROGRESS: plain
       IMAGE_REPO: registry.cn-hangzhou.aliyuncs.com/kip-app/kip-gateway
-      DEPLOY_PATH: /home/xiaoshichuan/apps/kip-gateway
-      HEALTHCHECK_URL: http://127.0.0.1:9527/actuator/health
+      K8S_NAMESPACE: kip-poc
+      K8S_DEPLOYMENT: kip-gateway
+      K8S_SERVICE: kip-gateway
+      K8S_MANIFEST_DIR: ./deploy/k8s
+      ROLLOUT_TIMEOUT: 180s
+      NACOS_ADDR: 10.42.0.125:8848
+      NACOS_GROUP: K8S_POC
+      NACOS_NAMESPACE: 74a3fe73-35c1-474e-ade8-9bc460b3f398
+      NACOS_DATA_ID: kip-gateway-k8s.yml
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-
-      - name: Ensure SSH remote
-        shell: bash
-        run: bash ./scripts/ops/git-ensure-ssh-origin.sh
 
       - name: Resolve image variables
         shell: bash
@@ -48,8 +59,12 @@ jobs:
             IMAGE_TAG="${GITHUB_SHA::12}"
           fi
 
+          NACOS_ACTION="${{ github.event_name == 'workflow_dispatch' && inputs.nacos_action || 'publish' }}"
+
           echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
           echo "FULL_IMAGE=${IMAGE_REPO}:${IMAGE_TAG}" >> "$GITHUB_ENV"
+          echo "NACOS_ACTION=${NACOS_ACTION}" >> "$GITHUB_ENV"
+          echo "Deploy action: ${NACOS_ACTION}"
 
       - name: Docker login to ACR
         shell: bash
@@ -81,79 +96,73 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          docker build --progress=plain -t "${IMAGE_REPO}:${IMAGE_TAG}" -t "${IMAGE_REPO}:latest" .
+          docker build --progress=plain -t "${FULL_IMAGE}" .
 
       - name: Push image
-        id: push_image
-        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
-          docker push "${IMAGE_REPO}:${IMAGE_TAG}"
-          docker push "${IMAGE_REPO}:latest"
+          docker push "${FULL_IMAGE}"
 
-      - name: Deploy with docker compose
+      - name: Sync Nacos config
         shell: bash
+        env:
+          NACOS_USER: ${{ secrets.NACOS_USER }}
+          NACOS_PASS: ${{ secrets.NACOS_PASS }}
         run: |
           set -euo pipefail
-          STATE_DIR="${DEPLOY_PATH}/.deploy-state"
-          CURRENT_FILE="${STATE_DIR}/current_image_tag"
+          CONFIG_FILE="${GITHUB_WORKSPACE}/deploy/k8s/nacos/kip-gateway-k8s.yml"
 
-          test -d "${DEPLOY_PATH}"
-          test -f "${DEPLOY_PATH}/docker-compose.yml"
-
-          mkdir -p "${STATE_DIR}"
-          PREV_TAG=""
-          if [ -f "${CURRENT_FILE}" ]; then
-            PREV_TAG="$(cat "${CURRENT_FILE}")"
-          fi
-
-          echo "PREV_TAG=${PREV_TAG}" >> "$GITHUB_ENV"
-
-          cd "${DEPLOY_PATH}"
-          export IMAGE_TAG
-
-          if [ "${{ steps.push_image.outcome }}" = "success" ]; then
-            docker compose pull
-          else
-            echo "Registry push failed; deploying the freshly built local image on the runner host"
-            docker image inspect "${FULL_IMAGE}" >/dev/null
-          fi
-
-          docker compose up -d
-
-      - name: Health check
-        shell: bash
-        run: |
-          set -euo pipefail
-          for i in $(seq 1 20); do
-            if curl -fsS "${HEALTHCHECK_URL}" >/dev/null; then
-              echo "Health check passed"
-              exit 0
+          if [ "${NACOS_ACTION}" = "publish" ]; then
+            if ./scripts/ops/nacos-config.sh verify "${NACOS_DATA_ID}" "${CONFIG_FILE}"; then
+              echo "Nacos config already matches repo state"
+            else
+              echo "Nacos config drift detected; publishing repo state to Nacos"
+              ./scripts/ops/nacos-config.sh put "${NACOS_DATA_ID}" "${CONFIG_FILE}"
             fi
-            sleep 5
-          done
+          else
+            ./scripts/ops/nacos-config.sh verify "${NACOS_DATA_ID}" "${CONFIG_FILE}"
+          fi
 
-          echo "Health check failed"
-          exit 1
+      - name: Apply K8s secret
+        shell: bash
+        env:
+          REDIS_PASSWORD: ${{ secrets.KIP_GATEWAY_REDIS_PASSWORD }}
+          AUTH_JWT_SECRET: ${{ secrets.KIP_GATEWAY_AUTH_JWT_SECRET }}
+        run: |
+          set -euo pipefail
+          ./scripts/ops/k8s-secret.sh auto
 
-      - name: Persist deployed tag
-        if: success()
+      - name: Capture current deployment image
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "${DEPLOY_PATH}/.deploy-state"
-          printf "%s" "${IMAGE_TAG}" > "${DEPLOY_PATH}/.deploy-state/current_image_tag"
+          PREVIOUS_IMAGE=""
+          if kubectl -n "${K8S_NAMESPACE}" get deployment "${K8S_DEPLOYMENT}" >/dev/null 2>&1; then
+            PREVIOUS_IMAGE="$(kubectl -n "${K8S_NAMESPACE}" get deployment "${K8S_DEPLOYMENT}" -o jsonpath='{.spec.template.spec.containers[0].image}')"
+          fi
+
+          echo "PREVIOUS_IMAGE=${PREVIOUS_IMAGE}" >> "$GITHUB_ENV"
+
+      - name: Apply K8s manifests
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ops/k8s-apply.sh
+
+      - name: Smoke verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ops/k8s-smoke.sh
 
       - name: Rollback on failure
-        if: failure() && env.PREV_TAG != ''
+        if: failure() && env.PREVIOUS_IMAGE != ''
         shell: bash
         run: |
           set -euo pipefail
-          cd "${DEPLOY_PATH}"
-          export IMAGE_TAG="${PREV_TAG}"
-          docker compose pull
-          docker compose up -d
+          kubectl -n "${K8S_NAMESPACE}" set image "deployment/${K8S_DEPLOYMENT}" "${K8S_DEPLOYMENT}=${PREVIOUS_IMAGE}"
+          kubectl -n "${K8S_NAMESPACE}" rollout status "deployment/${K8S_DEPLOYMENT}" --timeout="${ROLLOUT_TIMEOUT}"
 
       - name: Docker logout
         if: always()

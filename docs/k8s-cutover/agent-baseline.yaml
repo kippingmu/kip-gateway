@@ -1,0 +1,33 @@
+repo: kip-gateway
+branch: codex/k8s-poc
+k8s:
+  namespace: kip-poc
+  deployment: kip-gateway
+  service: kip-gateway
+  port: 9527
+image:
+  repo: registry.cn-hangzhou.aliyuncs.com/kip-app/kip-gateway
+nacos:
+  addr: 10.42.0.125:8848
+  namespace: 74a3fe73-35c1-474e-ade8-9bc460b3f398
+  group: K8S_POC
+  data_id: kip-gateway-k8s.yml
+secrets:
+  name: kip-gateway-secret
+  keys:
+    - REDIS_PASSWORD
+    - AUTH_JWT_SECRET
+smoke:
+  health_path: /actuator/health
+  routes_path: /actuator/gateway/routes
+  expected_route_ids:
+    - auth-api
+    - kip-auth
+    - app-api
+    - kip-api
+    - kip-app
+scripts:
+  - scripts/ops/k8s-secret.sh
+  - scripts/ops/k8s-apply.sh
+  - scripts/ops/k8s-smoke.sh
+  - scripts/ops/nacos-config.sh
