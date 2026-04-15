@@ -24,6 +24,19 @@ ACTION="${1:-get}"
 DATA_ID="${2:-$DEFAULT_DATA_ID}"
 ACCESS_TOKEN="$(token)"
 
+files_match() {
+  local left="$1"
+  local right="$2"
+  python3 - "$left" "$right" <<'PY'
+import pathlib
+import sys
+
+left = pathlib.Path(sys.argv[1]).read_text().rstrip()
+right = pathlib.Path(sys.argv[2]).read_text().rstrip()
+sys.exit(0 if left == right else 1)
+PY
+}
+
 case "$ACTION" in
   get)
     curl -fsS -G "http://${NACOS_ADDR}/nacos/v1/cs/configs" \
@@ -65,7 +78,7 @@ case "$ACTION" in
       --data-urlencode "tenant=${TENANT}" \
       --data-urlencode "group=${GROUP}" \
       --data-urlencode "dataId=${DATA_ID}" > "$TMP_REMOTE"
-    if cmp -s "$TMP_REMOTE" "$INPUT"; then
+    if files_match "$TMP_REMOTE" "$INPUT"; then
       echo "Nacos config verified: ${DATA_ID}"
     else
       echo "Nacos config mismatch: ${DATA_ID}" >&2
