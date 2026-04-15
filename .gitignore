@@ -43,3 +43,6 @@ build/
 ### Local Configuration ###
 **/application-local.yml
 **/application-local.yaml
+
+### Local Build Artifacts ###
+deps/
