@@ -1,0 +1,42 @@
+server:
+  port: ${SERVER_PORT:9527}
+
+spring:
+  cloud:
+    service-registry:
+      auto-registration:
+        enabled: false
+    nacos:
+      discovery:
+        enabled: false
+        register-enabled: false
+    sentinel:
+      enabled: false
+  data:
+    redis:
+      host: ${REDIS_HOST:10.42.0.124}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 5s
+      connect-timeout: 5s
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: INFO
+    xyz.kip: INFO
+  file:
+    path: /tmp/kip-gateway/logs
+
+management:
+  health:
+    redis:
+      enabled: false
+  tracing:
+    enabled: false
+
+gateway:
+  oauth2:
+    enabled: false
+  auth:
+    whitelist: /actuator/**,/gateway/**,/api/auth/**,/api/auth/login,/api/auth/register,/api/auth/health,/api/auth/health/**,/kip-auth/api/auth/login,/kip-auth/api/auth/register,/kip-auth/api/auth/health,/kip-auth/actuator/**,/kip-app/actuator/**

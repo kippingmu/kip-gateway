@@ -64,7 +64,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
             JwtUtil jwtUtil,
             ReactiveStringRedisTemplate redis,
             ObjectMapper objectMapper,
-            @Value("${gateway.auth.whitelist:/actuator/**,/gateway/**,/api/public/**,/api/auth/login,/api/auth/register,/api/auth/health}") String whitelistCsv,
+            @Value("${gateway.auth.whitelist:/actuator/**,/gateway/**,/api/public/**,/api/auth/**,/api/auth/login,/api/auth/register,/api/auth/health}") String whitelistCsv,
             @Value("${gateway.auth.user-whitelist:}") String userWhitelistCsv
     ) {
         this.jwtUtil = jwtUtil;

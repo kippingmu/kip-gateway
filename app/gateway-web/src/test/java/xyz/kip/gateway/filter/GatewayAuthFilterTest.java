@@ -46,6 +46,25 @@ class GatewayAuthFilterTest {
     }
 
     @Test
+    void shouldSkipAuthenticationForK8sSameDomainAuthHealthPath() {
+        JwtUtil jwtUtil = mock(JwtUtil.class);
+        ReactiveStringRedisTemplate redis = mock(ReactiveStringRedisTemplate.class);
+        GatewayAuthFilter filter = new GatewayAuthFilter(jwtUtil, redis, new ObjectMapper(), "/api/auth/login,/api/auth/register,/api/auth/health,/actuator/**", "");
+
+        AtomicReference<ServerWebExchange> captured = new AtomicReference<>();
+        MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/api/auth/health"));
+        GatewayFilterChain chain = value -> {
+            captured.set(value);
+            return Mono.empty();
+        };
+
+        filter.filter(exchange, chain).block();
+
+        assertNotNull(captured.get());
+        verifyNoInteractions(jwtUtil, redis);
+    }
+
+    @Test
     void shouldSkipAuthenticationForDiscoveryAuthPath() {
         JwtUtil jwtUtil = mock(JwtUtil.class);
         ReactiveStringRedisTemplate redis = mock(ReactiveStringRedisTemplate.class);

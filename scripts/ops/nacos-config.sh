@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
-NACOS_ADDR="10.42.0.125:8848"
-NACOS_USER="nacos"
-NACOS_PASS="nacos8848"
-GROUP="DEFAULT_GROUP"
-TENANT=""
-DEFAULT_DATA_ID="kip-gateway-dev.yml"
+NACOS_ADDR="${NACOS_ADDR:-10.42.0.125:8848}"
+NACOS_USER="${NACOS_USER:-nacos}"
+NACOS_PASS="${NACOS_PASS:-nacos8848}"
+GROUP="${NACOS_GROUP:-DEFAULT_GROUP}"
+TENANT="${NACOS_NAMESPACE:-}"
+DEFAULT_DATA_ID="${DEFAULT_DATA_ID:-kip-gateway-dev.yml}"
 
 usage() {
   echo "Usage: $0 get [dataId]"
