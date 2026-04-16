@@ -33,7 +33,12 @@ management:
     redis:
       enabled: false
   tracing:
-    enabled: false
+    enabled: ${MANAGEMENT_TRACING_ENABLED:true}
+    sampling:
+      probability: ${MANAGEMENT_TRACING_SAMPLING_PROBABILITY:1.0}
+    export:
+      zipkin:
+        endpoint: ${MANAGEMENT_TRACING_EXPORT_ZIPKIN_ENDPOINT:http://10.42.0.125:9411/api/v2/spans}
 
 gateway:
   oauth2:

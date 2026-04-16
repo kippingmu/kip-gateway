@@ -49,3 +49,12 @@ logging:
     root: INFO
     org.springframework.cloud.gateway: INFO
     xyz.kip: INFO
+
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+    export:
+      zipkin:
+        endpoint: ${MANAGEMENT_TRACING_EXPORT_ZIPKIN_ENDPOINT:http://10.42.0.125:9411/api/v2/spans}
