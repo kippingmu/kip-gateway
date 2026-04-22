@@ -111,7 +111,7 @@ class GatewayAuthFilterTest {
         when(jwtUtil.getAllClaimsFromToken("jwt-token")).thenReturn(claims);
         when(claims.get("tenantId")).thenReturn("default");
         when(valueOperations.get(RedisKeyUtil.userTokenKey("user-1"))).thenReturn(Mono.just("\"jwt-token\""));
-        when(valueOperations.get(RedisKeyUtil.userInfoKey("user-1"))).thenReturn(Mono.just("{\"userId\":\"user-1\",\"username\":\"alice\",\"tenantId\":\"default\",\"email\":\"alice@example.com\",\"phone\":\"13900000001\"}"));
+        when(valueOperations.get(RedisKeyUtil.userInfoKey("user-1"))).thenReturn(Mono.just("{\"userId\":\"user-1\",\"username\":\"alice\",\"tenantId\":\"default\",\"email\":\"alice@example.com\",\"phone\":\"13900000001\",\"roleCodes\":[\"ADMIN\"]}"));
 
         GatewayAuthFilter filter = new GatewayAuthFilter(jwtUtil, redis, new ObjectMapper(), "/api/auth/login,/api/auth/register,/api/auth/health", "");
         AtomicReference<ServerWebExchange> captured = new AtomicReference<>();
@@ -133,6 +133,7 @@ class GatewayAuthFilterTest {
         assertEquals("default", headers.getFirst("X-Tenant-Id"));
         assertEquals("alice@example.com", headers.getFirst("X-User-Email"));
         assertEquals("13900000001", headers.getFirst("X-User-Phone"));
+        assertEquals("ADMIN", headers.getFirst("X-User-Roles"));
     }
 
     @Test

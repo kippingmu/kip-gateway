@@ -26,6 +26,7 @@ import xyz.kip.gateway.util.TraceIdUtil;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     private static final String HDR_TENANT_ID = "X-Tenant-Id";
     private static final String HDR_USER_EMAIL = "X-User-Email";
     private static final String HDR_USER_PHONE = "X-User-Phone";
+    private static final String HDR_USER_ROLES = "X-User-Roles";
     private static final List<String> BUILTIN_WHITELIST_PREFIXES = List.of(
             "/kip-auth/api/auth/login",
             "/kip-auth/api/auth/register",
@@ -128,6 +130,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
                                 .header(HDR_TENANT_ID, safe(context.tenantId()))
                                 .header(HDR_USER_EMAIL, safe(context.email()))
                                 .header(HDR_USER_PHONE, safe(context.phone()))
+                                .header(HDR_USER_ROLES, safe(context.roleCodesCsv()))
                                 .build();
                         return chain.filter(exchange.mutate().request(mutated).build());
                     })
@@ -153,6 +156,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
                                         .header(HDR_TENANT_ID, safe(context.tenantId()))
                                         .header(HDR_USER_EMAIL, safe(context.email()))
                                         .header(HDR_USER_PHONE, safe(context.phone()))
+                                        .header(HDR_USER_ROLES, safe(context.roleCodesCsv()))
                                         .build();
                                 return chain.filter(exchange.mutate().request(mutated).build());
                             })
@@ -239,7 +243,8 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
                     firstText(root, "username", fallbackUsername),
                     firstText(root, "tenantId", fallbackTenantId),
                     firstText(root, "email", null),
-                    firstText(root, "phone", null)
+                    firstText(root, "phone", null),
+                    roleCodesCsv(root)
             );
         } catch (Exception e) {
             logger.warn("traceId={}, Failed to parse cached user info", TraceIdUtil.getTraceId(), e);
@@ -256,6 +261,25 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         return StringUtils.hasText(value) ? value : fallback;
     }
 
+    private String roleCodesCsv(JsonNode root) {
+        JsonNode node = root.get("roleCodes");
+        if (node == null || node.isNull()) {
+            return "";
+        }
+        if (node.isArray()) {
+            List<String> values = new ArrayList<>();
+            node.forEach(item -> {
+                String value = item.asText();
+                if (StringUtils.hasText(value)) {
+                    values.add(value.trim());
+                }
+            });
+            return String.join(",", values);
+        }
+        String value = node.asText();
+        return StringUtils.hasText(value) ? value.trim() : "";
+    }
+
     private static String safe(String value) {
         return value != null ? value : "";
     }
@@ -267,6 +291,6 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
-    private record UserContext(String userId, String username, String tenantId, String email, String phone) {
+    private record UserContext(String userId, String username, String tenantId, String email, String phone, String roleCodesCsv) {
     }
 }
