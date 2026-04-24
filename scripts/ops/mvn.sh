@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-cd "$ROOT_DIR"
-mvn -B "$@"
+
+exec bash /Users/xiaoshichuan/icodex/server-st/kip/scripts/repo/mvn.sh kip-gateway "$@"

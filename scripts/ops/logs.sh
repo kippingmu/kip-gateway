@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
-CONTAINER_NAME="kip-gateway"
-LINES="${1:-120}"
-docker logs --tail "$LINES" "$CONTAINER_NAME"
+
+exec bash /Users/xiaoshichuan/icodex/server-st/kip/scripts/repo/logs.sh kip-gateway "$@"
