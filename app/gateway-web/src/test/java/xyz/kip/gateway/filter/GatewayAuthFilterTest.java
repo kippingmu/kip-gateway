@@ -1,7 +1,6 @@
 package xyz.kip.gateway.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
@@ -102,16 +101,13 @@ class GatewayAuthFilterTest {
         ReactiveStringRedisTemplate redis = mock(ReactiveStringRedisTemplate.class);
         @SuppressWarnings("unchecked")
         ReactiveValueOperations<String, String> valueOperations = mock(ReactiveValueOperations.class);
-        Claims claims = mock(Claims.class);
 
         when(redis.opsForValue()).thenReturn(valueOperations);
         when(jwtUtil.validateToken("jwt-token")).thenReturn(true);
         when(jwtUtil.getUserIdFromToken("jwt-token")).thenReturn("user-1");
-        when(jwtUtil.getUsernameFromToken("jwt-token")).thenReturn("alice");
-        when(jwtUtil.getAllClaimsFromToken("jwt-token")).thenReturn(claims);
-        when(claims.get("tenantId")).thenReturn("default");
+        when(jwtUtil.getUsernameFromToken("jwt-token")).thenReturn("alice@example.com");
         when(valueOperations.get(RedisKeyUtil.userTokenKey("user-1"))).thenReturn(Mono.just("\"jwt-token\""));
-        when(valueOperations.get(RedisKeyUtil.userInfoKey("user-1"))).thenReturn(Mono.just("{\"userId\":\"user-1\",\"username\":\"alice\",\"tenantId\":\"default\",\"email\":\"alice@example.com\",\"phone\":\"13900000001\",\"roleCodes\":[\"ADMIN\"]}"));
+        when(valueOperations.get(RedisKeyUtil.userInfoKey("user-1"))).thenReturn(Mono.just("{\"userId\":\"user-1\",\"email\":\"alice@example.com\",\"phone\":\"13900000001\",\"roleCodes\":[\"ADMIN\"]}"));
 
         GatewayAuthFilter filter = new GatewayAuthFilter(jwtUtil, redis, new ObjectMapper(), "/api/auth/login,/api/auth/register,/api/auth/health", "");
         AtomicReference<ServerWebExchange> captured = new AtomicReference<>();
@@ -129,8 +125,7 @@ class GatewayAuthFilterTest {
         assertNotNull(captured.get());
         HttpHeaders headers = captured.get().getRequest().getHeaders();
         assertEquals("user-1", headers.getFirst("X-User-Id"));
-        assertEquals("alice", headers.getFirst("X-Username"));
-        assertEquals("default", headers.getFirst("X-Tenant-Id"));
+        assertEquals("alice@example.com", headers.getFirst("X-Username"));
         assertEquals("alice@example.com", headers.getFirst("X-User-Email"));
         assertEquals("13900000001", headers.getFirst("X-User-Phone"));
         assertEquals("ADMIN", headers.getFirst("X-User-Roles"));
@@ -142,17 +137,14 @@ class GatewayAuthFilterTest {
         ReactiveStringRedisTemplate redis = mock(ReactiveStringRedisTemplate.class);
         @SuppressWarnings("unchecked")
         ReactiveValueOperations<String, String> valueOperations = mock(ReactiveValueOperations.class);
-        Claims claims = mock(Claims.class);
 
         when(redis.opsForValue()).thenReturn(valueOperations);
         when(jwtUtil.validateToken("jwt-token")).thenReturn(true);
         when(jwtUtil.getUserIdFromToken("jwt-token")).thenReturn("571861813143015424");
-        when(jwtUtil.getUsernameFromToken("jwt-token")).thenReturn("15884526909");
-        when(jwtUtil.getAllClaimsFromToken("jwt-token")).thenReturn(claims);
-        when(claims.get("tenantId")).thenReturn("default");
+        when(jwtUtil.getUsernameFromToken("jwt-token")).thenReturn("kipmu@kip.xyz");
         when(valueOperations.get(RedisKeyUtil.userTokenKey("571861813143015424"))).thenReturn(Mono.just("\"jwt-token\""));
         when(valueOperations.get(RedisKeyUtil.userInfoKey("571861813143015424"))).thenReturn(Mono.just(
-                "{\"@class\":\"xyz.kip.auth.service.model.UserAuthModel\",\"userId\":\"571861813143015424\",\"username\":\"15884526909\",\"email\":\"kipmu@kip.xyz\",\"phone\":\"15884526909\",\"tenantId\":\"default\",\"roleCodes\":[\"java.util.ImmutableCollections$List12\",[\"ADMIN\"]]}"
+                "{\"@class\":\"xyz.kip.auth.service.model.UserAuthModel\",\"userId\":\"571861813143015424\",\"email\":\"kipmu@kip.xyz\",\"phone\":\"15884526909\",\"roleCodes\":[\"java.util.ImmutableCollections$List12\",[\"ADMIN\"]]}"
         ));
 
         GatewayAuthFilter filter = new GatewayAuthFilter(jwtUtil, redis, new ObjectMapper(), "/api/auth/login,/api/auth/register,/api/auth/health", "");
@@ -178,14 +170,11 @@ class GatewayAuthFilterTest {
         ReactiveStringRedisTemplate redis = mock(ReactiveStringRedisTemplate.class);
         @SuppressWarnings("unchecked")
         ReactiveValueOperations<String, String> valueOperations = mock(ReactiveValueOperations.class);
-        Claims claims = mock(Claims.class);
 
         when(redis.opsForValue()).thenReturn(valueOperations);
         when(jwtUtil.validateToken("jwt-token")).thenReturn(true);
         when(jwtUtil.getUserIdFromToken("jwt-token")).thenReturn("user-1");
-        when(jwtUtil.getUsernameFromToken("jwt-token")).thenReturn("alice");
-        when(jwtUtil.getAllClaimsFromToken("jwt-token")).thenReturn(claims);
-        when(claims.get("tenantId")).thenReturn("default");
+        when(jwtUtil.getUsernameFromToken("jwt-token")).thenReturn("alice@example.com");
         when(valueOperations.get(RedisKeyUtil.userTokenKey("user-1"))).thenReturn(Mono.just("\"jwt-token\""));
         when(valueOperations.get(RedisKeyUtil.userInfoKey("user-1"))).thenReturn(Mono.empty());
 
@@ -209,15 +198,12 @@ class GatewayAuthFilterTest {
         ReactiveStringRedisTemplate redis = mock(ReactiveStringRedisTemplate.class);
         @SuppressWarnings("unchecked")
         ReactiveValueOperations<String, String> valueOperations = mock(ReactiveValueOperations.class);
-        Claims claims = mock(Claims.class);
 
         when(redis.opsForValue()).thenReturn(valueOperations);
         when(jwtUtil.validateToken("jwt-token")).thenReturn(true);
         when(jwtUtil.getUserIdFromToken("jwt-token")).thenReturn("user-1");
         when(jwtUtil.getUsernameFromToken("jwt-token")).thenReturn("kipmu@kip.xyz");
-        when(jwtUtil.getAllClaimsFromToken("jwt-token")).thenReturn(claims);
-        when(claims.get("tenantId")).thenReturn("default");
-        when(valueOperations.get(RedisKeyUtil.userInfoKey("user-1"))).thenReturn(Mono.just("{\"userId\":\"user-1\",\"username\":\"kipmu@kip.xyz\",\"tenantId\":\"default\",\"email\":\"kipmu@kip.xyz\",\"phone\":\"13900000001\"}"));
+        when(valueOperations.get(RedisKeyUtil.userInfoKey("user-1"))).thenReturn(Mono.just("{\"userId\":\"user-1\",\"email\":\"kipmu@kip.xyz\",\"phone\":\"13900000001\"}"));
 
         GatewayAuthFilter filter = new GatewayAuthFilter(
                 jwtUtil,

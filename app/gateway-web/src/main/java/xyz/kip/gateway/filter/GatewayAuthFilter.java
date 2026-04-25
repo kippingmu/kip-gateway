@@ -45,7 +45,6 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final String HDR_USER_ID = "X-User-Id";
     private static final String HDR_USERNAME = "X-Username";
-    private static final String HDR_TENANT_ID = "X-Tenant-Id";
     private static final String HDR_USER_EMAIL = "X-User-Email";
     private static final String HDR_USER_PHONE = "X-User-Phone";
     private static final String HDR_USER_ROLES = "X-User-Roles";
@@ -110,24 +109,22 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         }
 
         String userId = jwtUtil.getUserIdFromToken(token);
-        String username = jwtUtil.getUsernameFromToken(token);
-        String tenantId = extractTenantId(token);
+        String identity = jwtUtil.getUsernameFromToken(token);
         if (!StringUtils.hasText(userId)) {
             logger.warn("traceId={}, Token missing userId", TraceIdUtil.getTraceId());
             return unauthorized(exchange, "Token missing userId");
         }
         String userInfoKey = RedisKeyUtil.userInfoKey(userId);
-        if (isUserWhitelisted(username)) {
+        if (isUserWhitelisted(identity)) {
             return redis.opsForValue().get(userInfoKey)
                     .flatMap(cachedUserJson -> {
-                        UserContext context = parseUserContext(cachedUserJson, userId, username, tenantId);
+                        UserContext context = parseUserContext(cachedUserJson, userId, identity);
                         if (context == null) {
                             return unauthorized(exchange, "User session not found");
                         }
                         ServerHttpRequest mutated = exchange.getRequest().mutate()
                                 .header(HDR_USER_ID, safe(context.userId()))
-                                .header(HDR_USERNAME, safe(context.username()))
-                                .header(HDR_TENANT_ID, safe(context.tenantId()))
+                                .header(HDR_USERNAME, safe(context.identity()))
                                 .header(HDR_USER_EMAIL, safe(context.email()))
                                 .header(HDR_USER_PHONE, safe(context.phone()))
                                 .header(HDR_USER_ROLES, safe(context.roleCodesCsv()))
@@ -146,14 +143,13 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
                     }
                     return redis.opsForValue().get(userInfoKey)
                             .flatMap(cachedUserJson -> {
-                                UserContext context = parseUserContext(cachedUserJson, userId, username, tenantId);
+                                UserContext context = parseUserContext(cachedUserJson, userId, identity);
                                 if (context == null) {
                                     return unauthorized(exchange, "User session not found");
                                 }
                                 ServerHttpRequest mutated = exchange.getRequest().mutate()
                                         .header(HDR_USER_ID, safe(context.userId()))
-                                        .header(HDR_USERNAME, safe(context.username()))
-                                        .header(HDR_TENANT_ID, safe(context.tenantId()))
+                                        .header(HDR_USERNAME, safe(context.identity()))
                                         .header(HDR_USER_EMAIL, safe(context.email()))
                                         .header(HDR_USER_PHONE, safe(context.phone()))
                                         .header(HDR_USER_ROLES, safe(context.roleCodesCsv()))
@@ -165,8 +161,8 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
                 .switchIfEmpty(unauthorized(exchange, "Token revoked or not latest"));
     }
 
-    private boolean isUserWhitelisted(String username) {
-        return StringUtils.hasText(username) && userWhitelist.contains(username);
+    private boolean isUserWhitelisted(String identity) {
+        return StringUtils.hasText(identity) && userWhitelist.contains(identity);
     }
 
     private boolean isWhitelisted(String path) {
@@ -208,15 +204,6 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         return response.writeWith(Mono.just(response.bufferFactory().wrap(bytes)));
     }
 
-    private String extractTenantId(String token) {
-        var claims = jwtUtil.getAllClaimsFromToken(token);
-        if (claims == null) {
-            return null;
-        }
-        Object value = claims.get("tenantId");
-        return value != null ? String.valueOf(value) : null;
-    }
-
     private String normalizeCachedToken(String cachedToken) {
         if (!StringUtils.hasText(cachedToken)) {
             return cachedToken;
@@ -228,7 +215,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         return normalized;
     }
 
-    private UserContext parseUserContext(String cachedUserJson, String fallbackUserId, String fallbackUsername, String fallbackTenantId) {
+    private UserContext parseUserContext(String cachedUserJson, String fallbackUserId, String fallbackIdentity) {
         if (!StringUtils.hasText(cachedUserJson)) {
             return null;
         }
@@ -238,18 +225,29 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
             if (!StringUtils.hasText(userId)) {
                 return null;
             }
+            String email = firstText(root, "email", null);
+            String phone = firstText(root, "phone", null);
             return new UserContext(
                     userId,
-                    firstText(root, "username", fallbackUsername),
-                    firstText(root, "tenantId", fallbackTenantId),
-                    firstText(root, "email", null),
-                    firstText(root, "phone", null),
+                    resolveIdentity(email, phone, fallbackIdentity),
+                    email,
+                    phone,
                     roleCodesCsv(root)
             );
         } catch (Exception e) {
             logger.warn("traceId={}, Failed to parse cached user info", TraceIdUtil.getTraceId(), e);
             return null;
         }
+    }
+
+    private String resolveIdentity(String email, String phone, String fallbackIdentity) {
+        if (StringUtils.hasText(email)) {
+            return email;
+        }
+        if (StringUtils.hasText(phone)) {
+            return phone;
+        }
+        return fallbackIdentity;
     }
 
     private String firstText(JsonNode root, String fieldName, String fallback) {
@@ -308,6 +306,6 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
-    private record UserContext(String userId, String username, String tenantId, String email, String phone, String roleCodesCsv) {
+    private record UserContext(String userId, String identity, String email, String phone, String roleCodesCsv) {
     }
 }
