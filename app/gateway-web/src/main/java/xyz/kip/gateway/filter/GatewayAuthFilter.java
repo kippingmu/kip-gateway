@@ -262,22 +262,39 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     }
 
     private String roleCodesCsv(JsonNode root) {
-        JsonNode node = root.get("roleCodes");
+        return String.join(",", extractRoleCodes(root.get("roleCodes")));
+    }
+
+    private List<String> extractRoleCodes(JsonNode node) {
         if (node == null || node.isNull()) {
-            return "";
+            return List.of();
+        }
+        if (node.isTextual()) {
+            String value = node.asText();
+            if (!StringUtils.hasText(value)) {
+                return List.of();
+            }
+            return Arrays.stream(value.split(","))
+                    .map(String::trim)
+                    .filter(StringUtils::hasText)
+                    .toList();
         }
         if (node.isArray()) {
+            if (looksLikeTypedCollectionWrapper(node)) {
+                return extractRoleCodes(node.get(1));
+            }
             List<String> values = new ArrayList<>();
-            node.forEach(item -> {
-                String value = item.asText();
-                if (StringUtils.hasText(value)) {
-                    values.add(value.trim());
-                }
-            });
-            return String.join(",", values);
+            node.forEach(item -> values.addAll(extractRoleCodes(item)));
+            return values;
         }
-        String value = node.asText();
-        return StringUtils.hasText(value) ? value.trim() : "";
+        return List.of();
+    }
+
+    private boolean looksLikeTypedCollectionWrapper(JsonNode node) {
+        return node.size() == 2
+                && node.get(0).isTextual()
+                && node.get(1).isArray()
+                && node.get(0).asText().contains(".");
     }
 
     private static String safe(String value) {

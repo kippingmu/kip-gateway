@@ -137,6 +137,42 @@ class GatewayAuthFilterTest {
     }
 
     @Test
+    void shouldPropagateAdminRoleFromTypedRedisCollectionWrapper() {
+        JwtUtil jwtUtil = mock(JwtUtil.class);
+        ReactiveStringRedisTemplate redis = mock(ReactiveStringRedisTemplate.class);
+        @SuppressWarnings("unchecked")
+        ReactiveValueOperations<String, String> valueOperations = mock(ReactiveValueOperations.class);
+        Claims claims = mock(Claims.class);
+
+        when(redis.opsForValue()).thenReturn(valueOperations);
+        when(jwtUtil.validateToken("jwt-token")).thenReturn(true);
+        when(jwtUtil.getUserIdFromToken("jwt-token")).thenReturn("571861813143015424");
+        when(jwtUtil.getUsernameFromToken("jwt-token")).thenReturn("15884526909");
+        when(jwtUtil.getAllClaimsFromToken("jwt-token")).thenReturn(claims);
+        when(claims.get("tenantId")).thenReturn("default");
+        when(valueOperations.get(RedisKeyUtil.userTokenKey("571861813143015424"))).thenReturn(Mono.just("\"jwt-token\""));
+        when(valueOperations.get(RedisKeyUtil.userInfoKey("571861813143015424"))).thenReturn(Mono.just(
+                "{\"@class\":\"xyz.kip.auth.service.model.UserAuthModel\",\"userId\":\"571861813143015424\",\"username\":\"15884526909\",\"email\":\"kipmu@kip.xyz\",\"phone\":\"15884526909\",\"tenantId\":\"default\",\"roleCodes\":[\"java.util.ImmutableCollections$List12\",[\"ADMIN\"]]}"
+        ));
+
+        GatewayAuthFilter filter = new GatewayAuthFilter(jwtUtil, redis, new ObjectMapper(), "/api/auth/login,/api/auth/register,/api/auth/health", "");
+        AtomicReference<ServerWebExchange> captured = new AtomicReference<>();
+        MockServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.get("/api/app/admin/navigation")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer jwt-token")
+        );
+        GatewayFilterChain chain = value -> {
+            captured.set(value);
+            return Mono.empty();
+        };
+
+        filter.filter(exchange, chain).block();
+
+        assertNotNull(captured.get());
+        assertEquals("ADMIN", captured.get().getRequest().getHeaders().getFirst("X-User-Roles"));
+    }
+
+    @Test
     void shouldRejectRequestWhenCachedUserInfoMissing() {
         JwtUtil jwtUtil = mock(JwtUtil.class);
         ReactiveStringRedisTemplate redis = mock(ReactiveStringRedisTemplate.class);
